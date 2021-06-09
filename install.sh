@@ -22,5 +22,3 @@ cd $SCRIPT_PATH
 sudo sh -c 'echo "yaml https://raw.githubusercontent.com/basler/pylon-ros-camera/master/pylon_camera/rosdep/pylon_sdk.yaml" > /etc/ros/rosdep/sources.list.d/30-pylon_camera.list'
 rosdep update
 sudo rosdep install --from-paths . --ignore-src --rosdistro=$ROS_DISTRO -y
-
-
