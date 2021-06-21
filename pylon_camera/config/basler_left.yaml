@@ -18,6 +18,7 @@ camera_info_url: ""
 #  'bayer_gbrg8' and 'bayer_rggb8'
 #  Default values are 'mono8' and 'rgb8'
 image_encoding: "bayer_rggb8"
+# image_encoding: "rgb8"
 
 #  Binning factor to get downsampled images. It refers here to any camera
 #  setting which combines rectangular neighborhoods of pixels into larger
@@ -52,7 +53,7 @@ shutter_mode: "global"
 #  The target gain in percent of the maximal value the camera supports
 #  For USB-Cameras, the gain is in dB, for GigE-Cameras it is given in so
 #  called 'device specific units'.
-# gain: 0.5
+# gain: 0.01
 
 #  Gamma correction of pixel intensity.
 #  Adjusts the brightness of the pixel values output by the camera's sensor
