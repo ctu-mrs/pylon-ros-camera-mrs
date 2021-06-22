@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 
+<launch>
+
 <!-- ENV VARS -->
 <arg name="UAV_NAME" default="$(env UAV_NAME)" />
 
 <group ns="$(arg UAV_NAME)">
 
   <group ns="basler_left">
-    <launch>
       <arg name="respawn" default="false" />
       <arg name="debug" default="false" />
       <arg name="node_name" default="pylon_camera_node" />
@@ -30,7 +31,6 @@
   </group>
 
   <group ns="basler_right">
-    <launch>
       <arg name="respawn" default="false" />
       <arg name="debug" default="false" />
       <arg name="node_name" default="pylon_camera_node" />
