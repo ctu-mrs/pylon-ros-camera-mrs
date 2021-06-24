@@ -699,6 +699,8 @@ bool PylonCameraNode::grabImage()
     boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_); 
     if ( !pylon_camera_->grab(img_raw_msg_.data) )
     {
+        ROS_ERROR("[%s]: Could not grab image. Shutting down to respawn.", ros::this_node::getName().c_str());
+        ros::shutdown();
         return false;
     }
     img_raw_msg_.header.stamp = ros::Time::now(); 
