@@ -40,6 +40,8 @@
 #include <pylon_camera/encoding_conversions.h>
 #include <sensor_msgs/image_encodings.h>
 
+#include <ros/ros.h>
+
 
 namespace pylon_camera
 {
