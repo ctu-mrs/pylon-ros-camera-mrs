@@ -3,6 +3,7 @@
 # get path to script
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 
+FILENAME_SDK=pylon_6.2.0.21487-deb0_amd64.deb
 # get ROS version
 distro=`lsb_release -r | awk '{ print $2 }'`
 [ "$distro" = "18.04" ] && ROS_DISTRO="melodic"
@@ -25,7 +26,10 @@ cd $SCRIPT_PATH
 # rosdep update
 # sudo rosdep install --from-paths . --ignore-src --rosdistro=$ROS_DISTRO -y
 
-wget https://dnb-public-downloads-misc.s3.eu-central-1.amazonaws.com/pylon/pylon_5.2.0.13457-deb0_amd64.deb
-sudo dpkg -i pylon_5.2.0.13457-deb0_amd64.deb
+# wget https://dnb-public-downloads-misc.s3.eu-central-1.amazonaws.com/pylon/pylon_5.2.0.13457-deb0_amd64.deb
+# sudo dpkg -i pylon_5.2.0.13457-deb0_amd64.deb
+# wget https://dnb-public-downloads-misc.s3.eu-central-1.amazonaws.com/pylon/pylon_6.2.0.21487-deb0_amd64.deb
+wget --no-check-certificate -O $FILENAME_SDK https://nasmrs.felk.cvut.cz/index.php/s/TRYRVx0UTYJxmYw/download
+sudo dpkg -i $FILENAME_SDK
 
 
