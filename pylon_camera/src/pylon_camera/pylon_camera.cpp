@@ -113,23 +113,23 @@ PYLON_CAM_TYPE detectPylonCamType(const Pylon::CDeviceInfo& device_info)
     }
 }
 
-PylonCamera* createFromDevice(PYLON_CAM_TYPE cam_type, Pylon::IPylonDevice* device)
+std::unique_ptr<PylonCamera> createFromDevice(PYLON_CAM_TYPE cam_type, Pylon::IPylonDevice* device)
 {
     switch ( cam_type )
     {
         case GIGE:
-            return new PylonGigECamera(device);
+            return std::make_unique<PylonGigECamera>(device);
         case USB:
-            return new PylonUSBCamera(device);
+            return std::make_unique<PylonUSBCamera>(device);
         case DART:
-            return new PylonDARTCamera(device);
+            return std::make_unique<PylonDARTCamera>(device);
         case UNKNOWN:
         default:
             return nullptr;
     }
 }
 
-PylonCamera* PylonCamera::create(const std::string& device_user_id_to_open)
+std::unique_ptr<PylonCamera> PylonCamera::create(const std::string& device_user_id_to_open)
 {
     try
     {
@@ -159,10 +159,10 @@ PylonCamera* PylonCamera::create(const std::string& device_user_id_to_open)
 		    PYLON_CAM_TYPE cam_type = detectPylonCamType(*it);
 		    if (cam_type != UNKNOWN)
 		    {
-		      PylonCamera* new_cam_ptr = createFromDevice(cam_type,
+		      std::unique_ptr<PylonCamera> new_cam_ptr = createFromDevice(cam_type,
 					                          tl_factory.CreateDevice(*it));
 		      new_cam_ptr->device_user_id_ = it->GetUserDefinedName();
-		      return new_cam_ptr;
+		      return std::move(new_cam_ptr);
 		    }
 		}
 		Pylon::PylonTerminate();
@@ -192,8 +192,8 @@ PylonCamera* PylonCamera::create(const std::string& device_user_id_to_open)
                             << device_user_id_to_open << ": "
                             << it->GetModelName());
                 PYLON_CAM_TYPE cam_type = detectPylonCamType(*it);
-                return createFromDevice(cam_type,
-                                        tl_factory.CreateDevice(*it));
+                return std::move(createFromDevice(cam_type,
+                                        tl_factory.CreateDevice(*it)));
             }
             else
             {
