@@ -6,10 +6,15 @@
   <arg name="BASLER_LEFT_ID" default="$(env BASLER_LEFT)" />
   <arg name="BASLER_RIGHT_ID" default="$(env BASLER_RIGHT)" />
 
+  <arg name="debug" default="false" />
+
+  <!-- nodelet-related arguments -->
+  <arg name="standalone" default="true" />
+  <arg name="manager" default="basler_nodelet_manager" />
+
   <group ns="$(arg UAV_NAME)">
 
       <arg name="respawn" default="true" />
-      <arg name="debug" default="false" />
       <arg name="mtu_size" default="1500" />
       <arg name="startup_user_set" default="CurrentSetting" />
       <arg name="enable_status_publisher" default="true" />
@@ -26,9 +31,6 @@
       <arg unless="$(arg debug)" name="launch_prefix" value="" />
       <arg     if="$(arg debug)" name="launch_prefix" value="debug_roslaunch" />
 
-      <!-- nodelet-related arguments -->
-      <arg name="standalone" default="true" />
-      <arg name="manager" default="basler_nodelet_manager" />
 
       <arg name="nodelet_left" value="pylon_camera/PylonCameraNodelet" />
       <arg name="nodelet_load_left" value="load $(arg nodelet_left) $(arg manager)"/>
