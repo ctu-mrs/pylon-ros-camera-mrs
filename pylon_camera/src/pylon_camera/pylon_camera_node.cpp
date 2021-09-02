@@ -53,7 +53,7 @@ PylonCameraNode::PylonCameraNode(const bool init)
 		}
 }
 
-void PylonCameraNode::initClass(const ros::NodeHandle& nh, const bool spin_while_initializing)
+bool PylonCameraNode::initClass(const ros::NodeHandle& nh, const bool spin_while_initializing)
 {
 		nh_ = nh;
 		spin_while_initializing_ = spin_while_initializing;
@@ -120,7 +120,7 @@ void PylonCameraNode::initClass(const ros::NodeHandle& nh, const bool spin_while
     componentStatusPublisher = nh_.advertise<dnb_msgs::ComponentStatus>("/pylon_camera_node/status", 5, true); // DNB component status publisher
     currentParamsPublisher = nh_.advertise<camera_control_msgs::currentParams>("/pylon_camera_node/currentParams", 5, true); // current camera params publisher
 
-    initCamera(spin_while_initializing_);
+    return initCamera(spin_while_initializing_);
 }
 
 void PylonCameraNode::create_diagnostics(diagnostic_updater::DiagnosticStatusWrapper &stat)
@@ -163,7 +163,7 @@ void PylonCameraNode::diagnostics_timer_callback_(const ros::TimerEvent&)
     diagnostics_updater_.update();
 }
 
-void PylonCameraNode::initCamera(const bool do_spin)
+bool PylonCameraNode::initCamera(const bool do_spin)
 {
     // reading all necessary parameter to open the desired camera from the
     // ros-parameter-server. In case that invalid parameter values can be
@@ -177,16 +177,16 @@ void PylonCameraNode::initCamera(const bool do_spin)
     // communication with the device and enabling the desired startup-settings
     if ( !initAndRegister() )
     {
-        ros::shutdown();
-        return;
+        return false;
     }
 
     // starting the grabbing procedure with the desired image-settings
     if ( !startGrabbing() )
     {
-        ros::shutdown();
-        return;
+        return false;
     }
+
+    return true;
 }
 
 bool PylonCameraNode::initAndRegister()
@@ -287,7 +287,7 @@ bool PylonCameraNode::startGrabbing()
 {
     if ( !pylon_camera_->startGrabbing(pylon_camera_parameter_set_) )
     {
-        ROS_ERROR("Error while start grabbing");
+        ROS_ERROR("Error while starting grabbing");
         return false;
     }
 
@@ -2847,7 +2847,7 @@ void PylonCameraNode::currentParamPub()
   boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
   if ( !pylon_camera_->isReady() )
     {
-      ROS_WARN("Error in triggerDeviceReset(): pylon_camera_ is not ready!");
+      ROS_WARN("Error in currentParamPub(): pylon_camera_ is not ready!");
       params.message = "pylon camera is not ready!";
       params.sucess = false;
     }
@@ -2901,7 +2901,10 @@ void PylonCameraNode::currentParamPub()
 
 PylonCameraNode::~PylonCameraNode()
 {
-	grab_imgs_rect_as_->shutdown();
+  if (grab_imgs_rect_as_)
+  {
+      grab_imgs_rect_as_->shutdown();
+  }
 }
 
 }  // namespace pylon_camera

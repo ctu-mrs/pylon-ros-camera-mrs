@@ -3,8 +3,8 @@
 
   <!-- ENV VARS -->
   <arg name="UAV_NAME" default="$(env UAV_NAME)" />
-  <arg name="BASLER_LEFT_ID" default="$(env BASLER_LEFT)" />
-  <arg name="BASLER_RIGHT_ID" default="$(env BASLER_RIGHT)" />
+  <arg name="BASLER_LEFT_ID" default="$(optenv BASLER_LEFT)" />
+  <arg name="BASLER_RIGHT_ID" default="$(optenv BASLER_RIGHT)" />
 
   <arg name="debug" default="false" />
 
@@ -24,6 +24,7 @@
       <arg name="camera_name_right" default="basler_right" />
 
       <arg name="config_file" default="$(find pylon_camera)/config/uav.yaml" />
+      <arg name="config_file_grayscale" default="$(find pylon_camera)/config/grayscale.yaml" />
 
       <arg name="camera_info_url_left" default="file://$(find mrs_uav_general)/config/camera_calibrations/basler/basler_$(arg BASLER_LEFT_ID).yaml" />
       <arg name="camera_info_url_right" default="file://$(find mrs_uav_general)/config/camera_calibrations/basler/basler_$(arg BASLER_RIGHT_ID).yaml" />
@@ -40,7 +41,7 @@
 
       <node if="$(arg standalone)" pkg="nodelet" type="nodelet" name="$(arg manager)" args="manager" output="screen" launch-prefix="$(arg launch_prefix)" respawn="$(arg respawn)" />
 
-      <node pkg="nodelet" type="nodelet" name="$(arg camera_name_left)" args="$(arg nodelet_load_left)" output="screen" launch-prefix="$(arg launch_prefix)" respawn="$(arg respawn)" >
+      <node pkg="nodelet" type="nodelet" name="$(arg camera_name_left)" args="$(arg nodelet_load_left)" output="screen" respawn="$(arg respawn)" >
         <rosparam command="load" file="$(arg config_file)" />
         <param name="camera_frame" value="$(arg UAV_NAME)/$(arg camera_name_left)_optical"/>
         <param name="device_user_id" value="$(arg camera_name_left)"/>
@@ -51,7 +52,7 @@
         <param name="enable_current_params_publisher" value="$(arg enable_current_params_publisher)"/>
       </node>
 
-      <node pkg="nodelet" type="nodelet" name="$(arg camera_name_right)" args="$(arg nodelet_load_right)" output="screen" launch-prefix="$(arg launch_prefix)" respawn="$(arg respawn)" >
+      <node pkg="nodelet" type="nodelet" name="$(arg camera_name_right)" args="$(arg nodelet_load_right)" output="screen" respawn="$(arg respawn)" >
         <rosparam command="load" file="$(arg config_file)" />
         <param name="camera_frame" value="$(arg UAV_NAME)/$(arg camera_name_right)_optical"/>
         <param name="device_user_id" value="$(arg camera_name_right)"/>
