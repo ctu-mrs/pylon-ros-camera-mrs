@@ -47,10 +47,15 @@ PylonCameraNodelet::PylonCameraNodelet()
 
 void PylonCameraNodelet::onInit()
 {
-    initClass(nodelet::Nodelet::getMTPrivateNodeHandle(), false);
-
-    const ros::Duration dur = ros::Duration(ros::Rate(frameRate()));
-		spin_tim_ = PylonCameraNode::nh_.createTimer(dur, &PylonCameraNodelet::timSpin, this);
+    if (initClass(nodelet::Nodelet::getPrivateNodeHandle(), false))
+    {
+        const ros::Duration dur = ros::Duration(ros::Rate(frameRate()));
+        spin_tim_ = PylonCameraNode::nh_.createTimer(dur, &PylonCameraNodelet::timSpin, this);
+    }
+    else
+    {
+        ROS_ERROR_STREAM("[PylonCameraNodelet]: Failed to initialize camera [" << pylon_camera_parameter_set_.deviceUserID() << "], not starting image acquisition.");
+    }
 }
 
 void PylonCameraNodelet::timSpin([[maybe_unused]] const ros::TimerEvent&)

@@ -88,13 +88,13 @@ public:
     /**
      * initialize the general variables of this class.
      */
-		void initClass(const ros::NodeHandle& nh, const bool spin_while_initializing = true);
+		bool initClass(const ros::NodeHandle& nh, const bool spin_while_initializing = true);
 
     /**
      * initialize the camera and the ros node.
      * calls ros::shutdown if an error occurs.
      */
-    void initCamera(const bool do_spin);
+    bool initCamera(const bool do_spin);
 
     /**
      * spin the node
