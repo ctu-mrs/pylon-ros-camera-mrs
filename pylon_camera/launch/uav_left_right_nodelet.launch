@@ -41,7 +41,7 @@
 
       <node if="$(arg standalone)" pkg="nodelet" type="nodelet" name="$(arg manager)" args="manager" output="screen" launch-prefix="$(arg launch_prefix)" respawn="$(arg respawn)" />
 
-      <node pkg="nodelet" type="nodelet" name="$(arg camera_name_left)" args="$(arg nodelet_load_left)" output="screen" respawn="$(arg respawn)" >
+      <node pkg="nodelet" type="nodelet" name="$(arg camera_name_left)" args="$(arg nodelet_load_left)" output="screen" launch-prefix="bash -c 'sleep 5; $0 $@'; $(arg launch_prefix)" respawn="$(arg respawn)" >
         <rosparam command="load" file="$(arg config_file)" />
         <param name="camera_frame" value="$(arg UAV_NAME)/$(arg camera_name_left)_optical"/>
         <param name="device_user_id" value="$(arg camera_name_left)"/>
