@@ -28,6 +28,55 @@ Please check the README file of each package for more details and help.
  * Start the driver: `roslaunch pylon_camera pylon_camera_node.launch`
  * GigE Cameras IP Configuration can be done using the command: `roslaunch pylon_camera pylon_camera_ip_configuration.launch`
 
+## Unlocking performance
+
+This API doesn't offer you a way to change everything that you need for extracting the maximum performance out of this camera. You have to use pylon-viewer for this instead.
+
+
+
+**Notes:**
+1. This guide is written based on daa1600-60uc. 
+2. Always plug the camera in USB3 for best performance. 
+
+### Using pylon-viewer
+
+* Go to Basler website and download the tar.gz file for the latest pylon viewer but **do not install anything from the package.**
+* Extract and launch pylon-viewer from the bin folder directly. 
+
+### Getting video feed from camera in pylon-viewer
+
+1. Open the camera by double clicking on it. 
+2. In Acquisition Control -> Trigger Mode -> Off
+3. In Acquisition Control -> Trigger Source -> Software
+4. Click the video camera option in the top menu bar to see the video feed and the FPS stats.
+
+### Changing camera output resolution
+
+This pylon-viewer method is the only way to choose a custom resolution for the camera. 
+
+1. Open the camera in pylon-viewer by double-clicking it. 
+2. Go to Image Format Control -> Width/Height to change the output resolution.
+3. Read the topic in this ReadME that shows you how to save all of this.
+
+### Getting high frame rate and max performance
+
+1. Plug the camera in a USB3 port.
+2. Open pylon-viewer and follow along.
+3. The full speed of this camera is limited unless you change the following: Device Control -> Device Link Throughput Limit Mode -> Off. 
+4. The best frame rate is available by changing the following in pylon-viewer: Image Format Control -> Pixel Format -> BayerRG8. This format provides the highest frame rate if all the other conditions are kept the same. Further improvements can be made by reading the next steps. 
+5. This will distort your color balance which can be fixed by: Image Quality Control -> Balance White Auto -> Continuous/Once.
+6. In Acquisition Control -> Exposure Auto -> Off to set manual Exposure Time low so that you can extract the highet frame rate in bright environments. Set Exposure according to your situation to play around with optimal light and frame rate. 
+7. In Image Format Control -> Width/Height can give you better FPS for lower resolution. Reduce Binning to 1 to get higher resolutions if desired. 
+8. Read the topic in this ReadME that shows you how to save all of this.
+
+### Savings your settings from pylon-viewer
+
+By default, when the camera is powered off, you will lose your changes if you don't save them. 
+
+1. Make your desired changes as described above. 
+2. In pylon-viewer, go to User Set Control -> User Set Selector -> User Set 1/2/3, and then press Execute button for User Set Save.
+3. In the launch file, you can access this User Set by using the parameter startup_user_set.
+
 ## Available functionalities:
 
 This package offers many functions of the Basler [pylon Camera Software Suite](https://www.baslerweb.com/en/products/software/basler-pylon-camera-software-suite/) C++ API inside the ROS-Framework.
