@@ -1,3 +1,19 @@
+# Notes for/from Parakh
+
+This new driver implements some important things that solve the issue with lower frame rates in some modes and our ability to get full performance on the camera. To read them by yourself, go to [pylon issues](https://github.com/basler/pylon-ros-camera/issues) page here. The issue [#28](https://github.com/basler/pylon-ros-camera/issues/28) and related issues of 21,27,29, and 25 paint a good picture. 
+
+## Issues with current Pylon-5 based implementation that we use in MRS
+---------------------------------
+
+Currently, having Trigger Mode set to Off leads to error messages on the camera driver complaining about frame being discarded due to insufficient bandwidth. From what I have gathered, there was a trigger and grab timeout in the firmware which worked with software triggering to get an image. Setting the Trigger Mode -> On in pylon meant that we were depending on this software trigger to get us our frame rate which was usually lower as well. But this didn't create any bandwidth issues or discarding of frames. Setting Trigger Mode -> Off in pylon meant that the camera was operating on the hardware free-run mode and there we saw issues on our ros nodes being reset due to this slowdown.
+
+## Comments on this new Pylon-6 based implementation that this branch is all about
+---------------------------------
+
+
+
+
+
 # pylon-ROS-camera
 
 The official pylon ROS driver for [Basler](http://www.baslerweb.com/) GigE Vision and USB3 Vision cameras
