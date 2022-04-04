@@ -1,19 +1,3 @@
-# Notes for/from Parakh
-
-This new driver implements some important things that solve the issue with lower frame rates in some modes and our ability to get full performance on the camera. To read them by yourself, go to [pylon issues](https://github.com/basler/pylon-ros-camera/issues) page here. The issue [#28](https://github.com/basler/pylon-ros-camera/issues/28) and related issues of 21,27,29, and 25 paint a good picture. 
-
-## Issues with current Pylon-5 based implementation that we use in MRS
----------------------------------
-
-Currently, having Trigger Mode set to Off leads to error messages on the camera driver complaining about frame being discarded due to insufficient bandwidth. From what I have gathered, there was a trigger and grab timeout in the firmware which worked with software triggering to get an image. Setting the Trigger Mode -> On in pylon meant that we were depending on this software trigger to get us our frame rate which was usually lower as well. But this didn't create any bandwidth issues or discarding of frames. Setting Trigger Mode -> Off in pylon meant that the camera was operating on the hardware free-run mode and there we saw issues on our ros nodes being reset due to this slowdown.
-
-## Comments on this new Pylon-6 based implementation that this branch is all about
----------------------------------
-
-
-
-
-
 # pylon-ROS-camera
 
 The official pylon ROS driver for [Basler](http://www.baslerweb.com/) GigE Vision and USB3 Vision cameras
@@ -31,15 +15,86 @@ This driver was improved by [drag and bot GmbH](https://www.dragandbot.com) from
 
 Please check the README file of each package for more details and help.
 
-## For the Impatient
- * Clone this repository in your catkin workspace (e.g. catkin_ws): `cd ~/catkin_ws/src && git clone https://github.com/basler/pylon-ros-camera`
- * Clone drag&bot public common messages: `git clone https://github.com/dragandbot/dragandbot_common.git`
- * Install ROS dependencies: `sudo sh -c 'echo "yaml https://raw.githubusercontent.com/basler/pylon-ros-camera/master/pylon_camera/rosdep/pylon_sdk.yaml" > /etc/ros/rosdep/sources.list.d/30-pylon_camera.list' && rosdep update && sudo rosdep install --from-paths . --ignore-src --rosdistro=$ROS_DISTRO -y`
- * Compile the workspace using catkin build or catkin make: `cd ~/catkin_ws && catkin clean -y && catkin build && source ~/.bashrc` or `cd ~/catkin_ws && catkin_make clean && catkin_make && source ~/.bashrc`
+## Installation & Usage
+ * Install dependencies and Basler SDK: `./install.sh`
  * Start the driver: `roslaunch pylon_camera pylon_camera_node.launch`
  * GigE Cameras IP Configuration can be done using the command: `roslaunch pylon_camera pylon_camera_ip_configuration.launch`
 
 The pylon Camera Software Suite is automatically installed through rosdep installation.
+
+## Unlocking performance
+
+This API doesn't offer you a way to change everything that you need for extracting the maximum performance out of this camera. You have to use pylon-viewer for this instead.
+
+
+
+**Notes:**
+1. This guide is written based on daa1600-60uc. 
+2. Always plug the camera in USB3 for best performance. 
+
+### Using pylon-viewer
+
+* Go to Basler website and download the tar.gz file for the latest pylon viewer but **do not install anything from the package.**
+* Extract and launch pylon-viewer from the bin folder directly. 
+
+### Getting video feed from camera in pylon-viewer
+
+1. Open the camera by double clicking on it. 
+2. In Acquisition Control -> Trigger Mode -> Off
+3. In Acquisition Control -> Trigger Source -> Software
+4. Click the video camera option in the top menu bar to see the video feed and the FPS stats.
+
+### Changing camera output resolution
+
+This pylon-viewer method is the only way to choose a custom resolution for the camera. 
+
+1. Open the camera in pylon-viewer by double-clicking it. 
+2. Go to Image Format Control -> Width/Height to change the output resolution.
+3. Read the topic in this ReadME that shows you how to save all of this.
+
+### Getting high frame rate and max performance
+
+1. Plug the camera in a USB3 port.
+2. Open pylon-viewer and follow along.
+3. The full speed of this camera is limited unless you change the following: Device Control -> Device Link Throughput Limit Mode -> Off. 
+4. The best frame rate is available by changing the following in pylon-viewer: Image Format Control -> Pixel Format -> BayerRG8. This format provides the highest frame rate if all the other conditions are kept the same. Further improvements can be made by reading the next steps. 
+5. This will distort your color balance which can be fixed by: Image Quality Control -> Balance White Auto -> Continuous/Once.
+6. In Acquisition Control -> Exposure Auto -> Off to set manual Exposure Time low so that you can extract the highet frame rate in bright environments. Set Exposure according to your situation to play around with optimal light and frame rate. 
+7. In Image Format Control -> Width/Height can give you better FPS for lower resolution. Reduce Binning to 1 to get higher resolutions if desired. 
+8. Read the topic in this ReadME that shows you how to save all of this.
+
+### Savings your settings from pylon-viewer
+
+By default, when the camera is powered off, you will lose your changes if you don't save them. 
+
+1. Make your desired changes as described above. 
+2. In pylon-viewer, go to User Set Control -> User Set Selector -> User Set 1/2/3, and then press Execute button for User Set Save.
+3. In the launch file, you can access this User Set by using the parameter startup_user_set.
+
+# Notes for transition from Pylon5 to Pylon6
+
+This new driver implements some important things that solve the issue with lower frame rates in some modes and our ability to get full performance on the camera. To read them by yourself, go to [pylon issues](https://github.com/basler/pylon-ros-camera/issues) page here. The issue [#28](https://github.com/basler/pylon-ros-camera/issues/28) and related issues of 21,27,29, and 25 paint a good picture. 
+
+## Issues with current Pylon-5 based implementation that we use in MRS
+---------------------------------
+
+Currently, having Trigger Mode set to Off leads to error messages on the camera driver complaining about frame being discarded due to insufficient bandwidth. From what I have gathered, there was a trigger and grab timeout in the firmware which worked with software triggering to get an image. Setting the Trigger Mode -> On in pylon meant that we were depending on this software trigger to get us our frame rate which was usually lower as well. But this didn't create any bandwidth issues or discarding of frames. Setting Trigger Mode -> Off in pylon meant that the camera was operating on the hardware free-run mode and there we saw issues on our ros nodes being reset due to this slowdown.
+
+## Comments on this new Pylon-6 based implementation that this branch is all about
+---------------------------------
+
+Setting Trigger Mode -> Off lets you run in hardware's free-run mode which means that the camera is capturing as fast as it can. But, when combined with the grabbing strategy OnebyOne[0], this causes a slow retreival from the buffer which leads to the camera frame from being discarded due to low available buffer. Switching grabbing strategy to value 1 or 2 alleviates this issue but you only get the latest frame and not everything in sequence.
+
+If you want to use the grabbing strategy OnebyOne[0], you have to use Trigger Mode -> On but that might give you lower frame rate as well as delayed frame since the software trigger goes serially as Trigger > Expose > Readout > Transfer > Receive. Trigger Mode -> Off means that the hardware keeps exposing and saving a frame and the software can just go grab it. You can try to go higher on the software trigger by changing the timeouts but I didn't get much of a performance change.
+
+In summary, 
+
+| Trigger Mode                 | Grabbing Strategy    | FPS              | Error                 | Uses                                     |
+|------------------------------|----------------------|------------------|-----------------------|------------------------------------------|
+| False - Free running capture | 0 - OnebyOne         | None             | Frame discarded error | None                                     |
+| False - Free running capture | 1/2 - LatestImage(s) | Highest possible | No errors             | Latest frame                             |
+| True - Software trigger      | 0/1/2 - Any          | Lower Frame rate | No errors             | Need to process every frame sequentially |
+
 
 ## Available functionalities:
 
