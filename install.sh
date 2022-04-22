@@ -25,7 +25,8 @@ cd $SCRIPT_PATH
 # rosdep update
 # sudo rosdep install --from-paths . --ignore-src --rosdistro=$ROS_DISTRO -y
 
-wget https://dnb-public-downloads-misc.s3.eu-central-1.amazonaws.com/pylon/pylon_5.2.0.13457-deb0_amd64.deb
-sudo dpkg -i pylon_5.2.0.13457-deb0_amd64.deb
+wget https://www.baslerweb.com/fp-1636375002/media/downloads/software/pylon_software/pylon_6.3.0.23157-deb0_amd64.deb 
+sudo dpkg -i pylon_6.3.0.23157-deb0_amd64.deb  
+
 
 

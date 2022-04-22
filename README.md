@@ -1,25 +1,17 @@
-# pylon-ROS-camera (Basler)
+# pylon-ROS-camera
 
-Forked from [github.com/basler/pylon-ros-camera](https://github.com/basler/pylon-ros-camera/commit/ed094fad02eed38af830a052c7420befc6483ef3) and updated for use in MRS.
-
-TODO:
-  * [ ] Manual on: how to recognize IDs of cameras and alias them (see this [PR](https://github.com/basler/pylon-ros-camera/pull/65))
-  * [ ] Nodeletize
-  * [ ] Add [hardware trigger support](https://github.com/basler/pylon-ros-camera/pull/46)
-
-The official pylon ROS driver for [Basler](http://www.baslerweb.com/) GigE Vision and USB3 Vision cameras.
+The official pylon ROS driver for [Basler](http://www.baslerweb.com/) GigE Vision and USB3 Vision cameras
 
 **Please Note:**
 This project is offered with no technical support by Basler AG.
 You are welcome to post any questions or issues on [GitHub](https://github.com/basler/pylon-ros-camera)
+
 This driver was improved by [drag and bot GmbH](https://www.dragandbot.com) from the version originally released by [Magazino GmbH](https://github.com/magazino/pylon_camera).
 
 **ROS packages included:**
 
 - **pylon_camera**: the driver itself
 - **camera_control_msgs**: message and service definitions for interacting with the camera driver
-- **dng_msgs**
-
 
 Please check the README file of each package for more details and help.
 
@@ -27,6 +19,8 @@ Please check the README file of each package for more details and help.
  * Install dependencies and Basler SDK: `./install.sh`
  * Start the driver: `roslaunch pylon_camera pylon_camera_node.launch`
  * GigE Cameras IP Configuration can be done using the command: `roslaunch pylon_camera pylon_camera_ip_configuration.launch`
+
+The pylon Camera Software Suite is automatically installed through rosdep installation.
 
 ## Unlocking performance
 
@@ -77,6 +71,31 @@ By default, when the camera is powered off, you will lose your changes if you do
 2. In pylon-viewer, go to User Set Control -> User Set Selector -> User Set 1/2/3, and then press Execute button for User Set Save.
 3. In the launch file, you can access this User Set by using the parameter startup_user_set.
 
+# Notes for transition from Pylon5 to Pylon6
+
+This new driver implements some important things that solve the issue with lower frame rates in some modes and our ability to get full performance on the camera. To read them by yourself, go to [pylon issues](https://github.com/basler/pylon-ros-camera/issues) page here. The issue [#28](https://github.com/basler/pylon-ros-camera/issues/28) and related issues of 21,27,29, and 25 paint a good picture. 
+
+## Issues with current Pylon-5 based implementation that we use in MRS
+---------------------------------
+
+Currently, having Trigger Mode set to Off leads to error messages on the camera driver complaining about frame being discarded due to insufficient bandwidth. From what I have gathered, there was a trigger and grab timeout in the firmware which worked with software triggering to get an image. Setting the Trigger Mode -> On in pylon meant that we were depending on this software trigger to get us our frame rate which was usually lower as well. But this didn't create any bandwidth issues or discarding of frames. Setting Trigger Mode -> Off in pylon meant that the camera was operating on the hardware free-run mode and there we saw issues on our ros nodes being reset due to this slowdown.
+
+## Comments on this new Pylon-6 based implementation that this branch is all about
+---------------------------------
+
+Setting Trigger Mode -> Off lets you run in hardware's free-run mode which means that the camera is capturing as fast as it can. But, when combined with the grabbing strategy OnebyOne[0], this causes a slow retreival from the buffer which leads to the camera frame from being discarded due to low available buffer. Switching grabbing strategy to value 1 or 2 alleviates this issue but you only get the latest frame and not everything in sequence.
+
+If you want to use the grabbing strategy OnebyOne[0], you have to use Trigger Mode -> On but that might give you lower frame rate as well as delayed frame since the software trigger goes serially as Trigger > Expose > Readout > Transfer > Receive. Trigger Mode -> Off means that the hardware keeps exposing and saving a frame and the software can just go grab it. You can try to go higher on the software trigger by changing the timeouts but I didn't get much of a performance change.
+
+In summary, 
+
+| Trigger Mode                 | Grabbing Strategy    | FPS              | Error                 | Uses                                     |
+|------------------------------|----------------------|------------------|-----------------------|------------------------------------------|
+| False - Free running capture | 0 - OnebyOne         | None             | Frame discarded error | None                                     |
+| False - Free running capture | 1/2 - LatestImage(s) | Highest possible | No errors             | Latest frame                             |
+| True - Software trigger      | 0/1/2 - Any          | Lower Frame rate | No errors             | Need to process every frame sequentially |
+
+
 ## Available functionalities:
 
 This package offers many functions of the Basler [pylon Camera Software Suite](https://www.baslerweb.com/en/products/software/basler-pylon-camera-software-suite/) C++ API inside the ROS-Framework.
@@ -107,6 +126,7 @@ This is a list of the supported functionality accesible through ROS services, wh
  * Light Source Preset
  * Balance White Auto
  * Brightness Control
+ * Balance White
 
 ### Acquisition Control
  * Sensor Readout Mode
@@ -123,6 +143,10 @@ This is a list of the supported functionality accesible through ROS services, wh
  * Auto Exposure Time Upper Limit
  * Acquisition Frame Rate
  * Resulting Frame Rate
+ * Trigger Timeout
+ * Grabbing Timeout
+ * Grabbing Strategy
+ * Output Queue Size
 
 ### Digital I/O Control
  * Line Selector
@@ -147,6 +171,26 @@ This is a list of the supported functionality accesible through ROS services, wh
  * (GigE only) GevSCPSPacketSize (Packet Size)
  * (GigE only) GevSCPD (Inter-Packet Delay)
  * (USB only) MaxTransferSize 
+
+### Stream & Statistic Parameters
+* MaxNumBuffer
+* Statistic Total Buffer Count
+* Statistic Failed Buffer Count
+* (GigE only) Statistic Buffer Underrun Count
+* (GigE only) Statistic Failed Packet Count
+* (GigE only) Statistic Resend Request Count
+* (USB only) Statistic Missed Frame Count
+* (USB only) Statistic Resynchronization Count
+
+### Chunk Data
+* ChunkModeActive
+* ChunkSelector
+* ChunkEnable
+* ChunkTimestamp
+* ChunkExposureTime
+* ChunkLineStatusAll
+* (ace GigE) ChunkFramecounter 
+* (ace 2 GigE/USB, ace USB) ChunkCounterValue 
 
 ## ROS Service list
 
@@ -201,6 +245,33 @@ Service Name  | Notes
 /pylon_camera_node/set_trigger_source | value : 0 = Software, 1 = Line1, 2 = Line3, 3 = Line4, 4 = Action1 (only selected GigE Camera)
 /pylon_camera_node/start_grabbing | -
 /pylon_camera_node/stop_grabbing  | -
+/pylon_camera_node/set_grab_timeout  | -
+/pylon_camera_node/set_trigger_timeout  | -
+/pylon_camera_node/set_white_balance  | Triggering this service will turn off the white balance auto 
+/pylon_camera_node/set_grabbing_strategy | value : 0 = GrabStrategy_OneByOne, 1 = GrabStrategy_LatestImageOnly, 2 = GrabStrategy_LatestImages
+/pylon_camera_node/set_output_queue_size | -
+/pylon_camera_node/set_max_num_buffer | value  = Maximum number of buffers that can be used simultaneously for grabbing images.
+/pylon_camera_node/get_max_num_buffer | value : -1 = Feature not supported by current camera, -2 = error getting the value.
+/pylon_camera_node/get_statistic_total_buffer_count | value : -1 = Feature not supported by current camera, -2 = error getting the value.
+/pylon_camera_node/get_statistic_failed_buffer_count | value : -1 = Feature not supported by current camera, -2 = error getting the value.
+/pylon_camera_node/get_statistic_buffer_underrun_count | value : -1 = Feature not supported by current camera, -2 = error getting the value.
+/pylon_camera_node/get_statistic_failed_packet_count | value : -1 = Feature not supported by current camera, -2 = error getting the value.
+/pylon_camera_node/get_statistic_resend_request_count | value : -1 = Feature not supported by current camera, -2 = error getting the value.
+/pylon_camera_node/get_statistic_missed_frame_count | value : -1 = Feature not supported by current camera, -2 = error getting the value.
+/pylon_camera_node/get_statistic_resynchronization_count | value : -1 = Feature not supported by current camera, -2 = error getting the value.
+/pylon_camera_node/set_chunk_mode_active | -
+/pylon_camera_node/get_chunk_mode_active | value 1 : enabled , value 2 : disabled, -1 = Feature not supported by current camera, -2 = error setting the value.
+/pylon_camera_node/set_chunk_selector | 1 = AutoBrightnessStatus , 2 = BrightPixel , 3 = CounterValue 4 = DynamicRangeMax , 5 = DynamicRangeMin , 6 = ExposureTime , 7 = FrameID ,  8 = FrameTriggerCounter , 9 = FrameTriggerIgnoredCounter , 10 = Framecounter , 11 = FramesPerTriggerCounter , 12 = Gain , 13 = GainAll , 14 = Height , 15 = Image , 16 = InputStatusAtLineTrigger , 17 = LineStatusAll , 18 = LineTriggerCounter , 19 = LineTriggerEndToEndCounter , 20 = LineTriggerIgnoredCounter, 21 = OffsetX , 22 = OffsetY, 23 = PayloadCRC16 , 24 = PixelFormat , 25 = SequenceSetIndex , 26 = SequencerSetActive, 27 = ShaftEncoderCounter , 28 = Stride , 29 = Timestamp , 30 = Triggerinputcounter , 31 = VirtLineStatusAll , 32 = Width 
+/pylon_camera_node/get_chunk_selector | 1 = AutoBrightnessStatus , 2 = BrightPixel , 3 = CounterValue 4 = DynamicRangeMax , 5 = DynamicRangeMin , 6 = ExposureTime , 7 = FrameID ,  8 = FrameTriggerCounter , 9 = FrameTriggerIgnoredCounter , 10 = Framecounter , 11 = FramesPerTriggerCounter , 12 = Gain , 13 = GainAll , 14 = Height , 15 = Image , 16 = InputStatusAtLineTrigger , 17 = LineStatusAll , 18 = LineTriggerCounter , 19 = LineTriggerEndToEndCounter , 20 = LineTriggerIgnoredCounter, 21 = OffsetX , 22 = OffsetY, 23 = PayloadCRC16 , 24 = PixelFormat , 25 = SequenceSetIndex , 26 = SequencerSetActive, 27 = ShaftEncoderCounter , 28 = Stride , 29 = Timestamp , 30 = Triggerinputcounter , 31 = VirtLineStatusAll , 32 = Width 
+/pylon_camera_node/set_chunk_enable | -
+/pylon_camera_node/get_chunk_enable | value 1 : enabled , value 2 : disabled, -1 = Feature not supported by current camera, -2 = error setting the value.
+/pylon_camera_node/get_chunk_timestamp | -
+/pylon_camera_node/get_chunk_timestamp | -
+/pylon_camera_node/get_chunk_exposure_time | -
+/pylon_camera_node/set_chunk_exposure_time | -
+/pylon_camera_node/get_chunk_line_status_all | -
+/pylon_camera_node/get_chunk_frame_counter | -
+/pylon_camera_node/get_chunk_counter_value | -
 
 ## Image pixel encoding
 
@@ -231,14 +302,14 @@ Start the driver with command: `roslaunch pylon_camera pylon_camera_node.launch`
 
 To test if the driver is correctly working we recommend to use the rqt ROS tool (http://wiki.ros.org/rqt). You will need to add an image viewer through the the contextual menu RQT Plugin --> Visualization --> Image View. Then please select the `pylon_camera_node/image_raw` to display the current camera picture. If the intrinsic calibration file was configured, `pylon_camera_node/image_rect` will also appear. Please check Intrinsic calibration section for further information.
 
-This drivers offers different ROS services to change the camera parameters. To see the list of available services plese use `rosservice list` command. Once you have located the desired service you can call it by using the `rosservice call /service_name {...parameters...}` (with the corresponding service and parameters). E.g.:
+This drivers offers different ROS services to change the camera parameters. To see the list of available services please use `rosservice list` command. Once you have located the desired service you can call it by using the `rosservice call /service_name {...parameters...}` (with the corresponding service and parameters). E.g.:
 
 ```
 ~/workspace/dnb_docs$ rosservice call /pylon_camera_node/set_reverse_x "data: true" 
 success: True
 message: "done"
 ```
-To auto-fill the parameters you can use Tab after writting the service name. Please refer to http://wiki.ros.org/rosservice for ros service usage.
+To auto-fill the parameters you can use Tab after writing the service name. Please refer to http://wiki.ros.org/rosservice for ros service usage.
 
 ### Intrinsic calibration
 
