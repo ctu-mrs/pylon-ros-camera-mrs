@@ -17,6 +17,8 @@ Please check the README file of each package for more details and help.
 
 ## Installation & Usage
  * Install dependencies and Basler SDK: `./install.sh`
+ * Add 'export $PYLON_ROOT="/opt/pylon"' to your bashrc
+ * Go to /opt/pylon/share/pylon and run the setup-usb.h
  * Start the driver: `roslaunch pylon_camera pylon_camera_node.launch`
  * GigE Cameras IP Configuration can be done using the command: `roslaunch pylon_camera pylon_camera_ip_configuration.launch`
 
