@@ -32,6 +32,7 @@
 #ifndef PYLON_CAMERA_PYLON_CAMERA_NODE_H
 #define PYLON_CAMERA_PYLON_CAMERA_NODE_H
 
+#include <memory>
 #include <boost/thread.hpp>
 #include <string>
 #include <ros/ros.h>
@@ -84,14 +85,19 @@ class PylonCameraNode
 {
 public:
 
-    PylonCameraNode();
+    PylonCameraNode(const bool init = true);
     virtual ~PylonCameraNode();
+
+    /**
+     * initialize the general variables of this class.
+     */
+		bool initClass(const ros::NodeHandle& nh, const bool spin_while_initializing = true);
 
     /**
      * initialize the camera and the ros node.
      * calls ros::shutdown if an error occurs.
      */
-    void init();
+    bool initCamera(const bool do_spin);
 
     /**
      * spin the node
@@ -344,7 +350,7 @@ protected:
      */
     camera_control_msgs::GrabImagesResult grabImagesRaw(
                     const camera_control_msgs::GrabImagesGoal::ConstPtr& goal,
-                    GrabImagesAS* action_server);
+                    std::unique_ptr<GrabImagesAS>& action_server);
 
     void initCalibrationMatrices(sensor_msgs::CameraInfo& info,
                                  const cv::Mat& D,
@@ -1137,6 +1143,9 @@ protected:
      */
     bool getChunkCounterValueCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
 
+		// set differently for node and nodelet (nodelet shouldn't spin)
+		bool spin_while_initializing_;
+
     ros::NodeHandle nh_;
     PylonCameraParameter pylon_camera_parameter_set_;
     ros::ServiceServer set_binning_srv_;
@@ -1223,21 +1232,21 @@ protected:
 
 
 
-    PylonCamera* pylon_camera_;
+    std::unique_ptr<PylonCamera> pylon_camera_;
 
-    image_transport::ImageTransport* it_;
+    std::unique_ptr<image_transport::ImageTransport> it_;
     image_transport::CameraPublisher img_raw_pub_;
 
-    image_transport::Publisher* img_rect_pub_;
-    image_geometry::PinholeCameraModel* pinhole_model_;
+    std::unique_ptr<image_transport::Publisher> img_rect_pub_;
+    std::unique_ptr<image_geometry::PinholeCameraModel> pinhole_model_;
 
-    GrabImagesAS grab_imgs_raw_as_;
-    GrabImagesAS* grab_imgs_rect_as_;
+    std::unique_ptr<GrabImagesAS> grab_imgs_raw_as_;
+    std::unique_ptr<GrabImagesAS> grab_imgs_rect_as_;
 
     sensor_msgs::Image img_raw_msg_;
-    cv_bridge::CvImage* cv_bridge_img_rect_;
+    std::unique_ptr<cv_bridge::CvImage> cv_bridge_img_rect_;
 
-    camera_info_manager::CameraInfoManager* camera_info_manager_;
+    std::unique_ptr<camera_info_manager::CameraInfoManager> camera_info_manager_;
 
     std::vector<std::size_t> sampling_indices_;
     std::array<float, 256> brightness_exp_lut_;

@@ -65,7 +65,7 @@ using namespace std;
 /*
  * 
  */
-int main(int argc, char** argv) {
+int main() {
     // The exit code of the sample application.
     int exitCode = 0;
     // Automagically call PylonInitialize and PylonTerminate to ensure the pylon runtime system
@@ -76,7 +76,6 @@ int main(int argc, char** argv) {
 
     try {
         PylonInitialize();
-        int exitCode = 0;
         int selction = -1;
         DeviceInfoList_t lstDevices;
         DeviceInfoList_t lstReachableDevices;
@@ -102,7 +101,7 @@ int main(int argc, char** argv) {
             {
                 // there are some cameras with not matching IP addres.
                 
-                for(int x = 0 ; x < lstDevices.size() ; ++x)
+                for(size_t x = 0 ; x < lstDevices.size() ; ++x)
                 {
                     cout << x;
                     string InterfaceAdd = "";
@@ -235,7 +234,6 @@ string AutoProbe(CBaslerGigEDeviceInfo &bdi, IGigETransportLayer* s_pTl)
         
         string IPaddr = get<0>(el);
         string Subnet = get<1>(el);
-        bool done = false;
         in_addr_t TemIP = inet_addr(IPaddr.c_str());
         TemIP = ntohl(TemIP);
         TemIP += 1;
@@ -398,7 +396,6 @@ int readKB(int iNumberofCamera)
 
 void DisplayCurrentStatus(DeviceInfoList_t &lstDevices, IGigETransportLayer* s_pTl) 
 {
-    bool bDone = false;
     if (lstDevices.size() > 0) 
     {
         for (uint x = 0; x < lstDevices.size(); x++) 

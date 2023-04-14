@@ -127,25 +127,25 @@ PYLON_CAM_TYPE detectPylonCamType(const Pylon::CDeviceInfo& device_info)
     return UNKNOWN;
 }
 
-PylonCamera* createFromDevice(PYLON_CAM_TYPE cam_type, Pylon::IPylonDevice* device)
+std::unique_ptr<PylonCamera> createFromDevice(PYLON_CAM_TYPE cam_type, Pylon::IPylonDevice* device)
 {
     switch ( cam_type )
     {
         case GIGE:
-            return new PylonGigECamera(device);
+            return std::make_unique<PylonGigECamera>(device);
         case GIGE2 :
-            return new PylonGigEAce2Camera(device);
+            return std::make_unique<PylonGigEAce2Camera>(device);
         case USB:
-            return new PylonUSBCamera(device);
+            return std::make_unique<PylonUSBCamera>(device);
         case DART:
-            return new PylonDARTCamera(device);
+            return std::make_unique<PylonDARTCamera>(device);
         case UNKNOWN:
         default:
             return nullptr;
     }
 }
 
-PylonCamera* PylonCamera::create(const std::string& device_user_id_to_open)
+std::unique_ptr<PylonCamera> PylonCamera::create(const std::string& device_user_id_to_open)
 {
     try
     {
@@ -154,7 +154,7 @@ PylonCamera* PylonCamera::create(const std::string& device_user_id_to_open)
 
         Pylon::CTlFactory& tl_factory = Pylon::CTlFactory::GetInstance();
         Pylon::DeviceInfoList_t device_list;
-        
+
         // EnumerateDevices() returns the number of devices found
         if ( 0 == tl_factory.EnumerateDevices(device_list) )
         {
@@ -170,15 +170,15 @@ PylonCamera* PylonCamera::create(const std::string& device_user_id_to_open)
                 for (it = device_list.begin(); it != device_list.end(); ++it)
                 {
                     ROS_INFO_STREAM("Found camera with DeviceUserID "
-                            << it->GetUserDefinedName() << ": "
-                            << it->GetModelName());
+                        << it->GetUserDefinedName() << ": "
+                        << it->GetModelName());
                     PYLON_CAM_TYPE cam_type = detectPylonCamType(*it);
                     if (cam_type != UNKNOWN)
                     {
-                    PylonCamera* new_cam_ptr = createFromDevice(cam_type,
-                                                    tl_factory.CreateDevice(*it));
+                      std::unique_ptr<PylonCamera> new_cam_ptr = createFromDevice(cam_type,
+                                                tl_factory.CreateDevice(*it));
                     new_cam_ptr->device_user_id_ = it->GetUserDefinedName();
-                    return new_cam_ptr;
+                    return std::move(new_cam_ptr);
                     }
                 }
                 Pylon::PylonTerminate();
@@ -208,8 +208,8 @@ PylonCamera* PylonCamera::create(const std::string& device_user_id_to_open)
                             << device_user_id_to_open << ": "
                             << it->GetModelName());
                 PYLON_CAM_TYPE cam_type = detectPylonCamType(*it);
-                return createFromDevice(cam_type,
-                                        tl_factory.CreateDevice(*it));
+                return std::move(createFromDevice(cam_type,
+                                        tl_factory.CreateDevice(*it)));
             }
             else
             {

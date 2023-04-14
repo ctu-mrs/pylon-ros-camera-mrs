@@ -45,239 +45,104 @@ namespace pylon_camera
 using sensor_msgs::CameraInfo;
 using sensor_msgs::CameraInfoPtr;
 
-PylonCameraNode::PylonCameraNode()
-    : nh_("~"),
-      pylon_camera_parameter_set_(),
-      set_binning_srv_(nh_.advertiseService("set_binning",
-                                            &PylonCameraNode::setBinningCallback,
-                                            this)),
-      set_roi_srv_(nh_.advertiseService("set_roi",
-                                        &PylonCameraNode::setROICallback,
-                                        this)),
-      set_exposure_srv_(nh_.advertiseService("set_exposure",
-                                             &PylonCameraNode::setExposureCallback,
-                                             this)),
-      set_gain_srv_(nh_.advertiseService("set_gain",
-                                         &PylonCameraNode::setGainCallback,
-                                         this)),
-      set_gamma_srv_(nh_.advertiseService("set_gamma",
-                                          &PylonCameraNode::setGammaCallback,
-                                          this)),
-      set_brightness_srv_(nh_.advertiseService("set_brightness",
-                                               &PylonCameraNode::setBrightnessCallback,
-                                               this)),
-      set_sleeping_srv_(nh_.advertiseService("set_sleeping",
-                                             &PylonCameraNode::setSleepingCallback,
-                                             this)),
-      set_offset_x_srv_(nh_.advertiseService("set_offset_x",
-                                             &PylonCameraNode::setOffsetXCallback,
-                                             this)),
-      set_offset_y_srv_(nh_.advertiseService("set_offset_y",
-                                             &PylonCameraNode::setOffsetYCallback,
-                                             this)),
-      reverse_x_srv_(nh_.advertiseService("set_reverse_x",
-                                             &PylonCameraNode::setReverseXCallback,
-                                             this)),
-      reverse_y_srv_(nh_.advertiseService("set_reverse_y",
-                                             &PylonCameraNode::setReverseYCallback,
-                                             this)),
-      set_black_level_srv_(nh_.advertiseService("set_black_level",
-                                             &PylonCameraNode::setBlackLevelCallback,
-                                             this)),
-      set_PGI_mode_srv_(nh_.advertiseService("set_pgi_mode",
-                                             &PylonCameraNode::setPGIModeCallback,
-                                             this)),
-      set_demosaicing_mode_srv_(nh_.advertiseService("set_demosaicing_mode",
-                                             &PylonCameraNode::setDemosaicingModeCallback,
-                                             this)),
-      set_noise_reduction_srv_(nh_.advertiseService("set_noise_reduction",
-                                             &PylonCameraNode::setNoiseReductionCallback,
-                                             this)),
-      set_sharpness_enhancement_srv_(nh_.advertiseService("set_sharpness_enhancement",
-                                             &PylonCameraNode::setSharpnessEnhancementCallback,
-                                             this)),
-      set_light_source_preset_srv_(nh_.advertiseService("set_light_source_preset",
-                                             &PylonCameraNode::setLightSourcePresetCallback,
-                                             this)),
-      set_balance_white_auto_srv_(nh_.advertiseService("set_balance_white_auto",
-                                             &PylonCameraNode::setBalanceWhiteAutoCallback,
-                                             this)),
-      set_sensor_readout_mode_srv_(nh_.advertiseService("set_sensor_readout_mode",
-                                             &PylonCameraNode::setSensorReadoutModeCallback,
-                                             this)),
-      set_acquisition_frame_count_srv_(nh_.advertiseService("set_acquisition_frame_count",
-                                             &PylonCameraNode::setAcquisitionFrameCountCallback,
-                                             this)),
-      set_trigger_selector_srv_(nh_.advertiseService("set_trigger_selector",
-                                             &PylonCameraNode::setTriggerSelectorCallback,
-                                             this)),
-      set_trigger_mode_srv_(nh_.advertiseService("set_trigger_mode",
-                                             &PylonCameraNode::setTriggerModeCallback,
-                                             this)),
-      execute_software_trigger_srv_(nh_.advertiseService("execute_software_trigger",
-                                             &PylonCameraNode::executeSoftwareTriggerCallback,
-                                             this)),
-      set_trigger_source_srv_(nh_.advertiseService("set_trigger_source",
-                                             &PylonCameraNode::setTriggerSourceCallback,
-                                             this)),
-      set_trigger_activation_srv_(nh_.advertiseService("set_trigger_activation",
-                                             &PylonCameraNode::setTriggerActivationCallback,
-                                             this)),
-      set_trigger_delay_srv_(nh_.advertiseService("set_trigger_delay",
-                                             &PylonCameraNode::setTriggerDelayCallback,
-                                             this)),
-      set_line_selector_srv_(nh_.advertiseService("set_line_selector",
-                                             &PylonCameraNode::setLineSelectorCallback,
-                                             this)),
-      set_line_mode_srv_(nh_.advertiseService("set_line_mode",
-                                             &PylonCameraNode::setLineModeCallback,
-                                             this)),
-      set_line_source_srv_(nh_.advertiseService("set_line_source",
-                                             &PylonCameraNode::setLineSourceCallback,
-                                             this)),
-      set_line_inverter_srv_(nh_.advertiseService("set_line_inverter",
-                                             &PylonCameraNode::setLineInverterCallback,
-                                             this)),
-      set_line_debouncer_time_srv_(nh_.advertiseService("set_line_debouncer_time",
-                                             &PylonCameraNode::setLineDebouncerTimeCallback,
-                                             this)),
-      set_user_set_selector_srv_(nh_.advertiseService("select_user_set",
-                                             &PylonCameraNode::setUserSetSelectorCallback,
-                                             this)),
-      save_user_set_srv_(nh_.advertiseService("save_user_set",
-                                             &PylonCameraNode::saveUserSetCallback,
-                                             this)),
-      load_user_set_srv_(nh_.advertiseService("load_user_set",
-                                             &PylonCameraNode::loadUserSetCallback,
-                                             this)),
-      set_user_set_default_selector_srv_(nh_.advertiseService("select_default_user_set",
-                                             &PylonCameraNode::setUserSetDefaultSelectorCallback,
-                                             this)),
-      set_device_link_throughput_limit_mode_srv_(nh_.advertiseService("set_device_link_throughput_limit_mode",
-                                             &PylonCameraNode::setDeviceLinkThroughputLimitModeCallback,
-                                             this)),
-      set_device_link_throughput_limit_srv_(nh_.advertiseService("set_device_link_throughput_limit",
-                                             &PylonCameraNode::setDeviceLinkThroughputLimitCallback,
-                                             this)),
-      reset_device_srv_(nh_.advertiseService("reset_device",
-                                             &PylonCameraNode::triggerDeviceResetCallback,
-                                             this)),
-      start_grabbing_srv_(nh_.advertiseService("start_grabbing",
-                                             &PylonCameraNode::StartGrabbingCallback,
-                                             this)),
-      stop_grabbing_srv_(nh_.advertiseService("stop_grabbing",
-                                             &PylonCameraNode::StopGrabbingCallback,
-                                             this)),
-      set_image_encoding_srv_(nh_.advertiseService("set_image_encoding",
-                                             &PylonCameraNode::setImageEncodingCallback,
-                                             this)),
-      set_max_transfer_size_srv_(nh_.advertiseService("set_max_transfer_size",
-                                             &PylonCameraNode::setMaxTransferSizeCallback,
-                                             this)),
-      set_gamma_selector_srv(nh_.advertiseService("set_gamma_selector",
-                                             &PylonCameraNode::setGammaSelectorCallback,
-                                             this)),
-      gamma_enable_srv(nh_.advertiseService("gamma_enable",
-                                             &PylonCameraNode::gammaEnableCallback,
-                                             this)),
-      set_grab_timeout_srv(nh_.advertiseService("set_grab_timeout",
-                                             &PylonCameraNode::setGrabTimeoutCallback,
-                                             this)),
-      set_trigger_timeout_srv(nh_.advertiseService("set_trigger_timeout",
-                                             &PylonCameraNode::setTriggerTimeoutCallback,
-                                             this)),
-      set_grabbing_strategy_srv(nh_.advertiseService("set_grabbing_strategy",
-                                             &PylonCameraNode::setGrabbingStrategyCallback,
-                                             this)),
-      set_output_queue_size_srv(nh_.advertiseService("set_output_queue_size",
-                                             &PylonCameraNode::setOutputQueueSizeCallback,
-                                             this)),
-      set_white_balance_srv(nh_.advertiseService("set_white_balance",
-                                             &PylonCameraNode::setWhiteBalanceCallback,
-                                             this)),
-      set_max_num_buffer_srv(nh_.advertiseService("set_max_num_buffer",
-                                             &PylonCameraNode::setMaxNumBufferCallback,
-                                             this)),
-      get_max_num_buffer_srv(nh_.advertiseService("get_max_num_buffer",
-                                             &PylonCameraNode::getMaxNumBufferCallback,
-                                             this)),
-      get_statistic_total_buffer_count_srv(nh_.advertiseService("get_statistic_total_buffer_count",
-                                             &PylonCameraNode::getStatisticTotalBufferCountCallback,
-                                             this)),
-      get_statistic_failed_buffer_count_srv(nh_.advertiseService("get_statistic_failed_buffer_count",
-                                             &PylonCameraNode::getStatisticFailedBufferCountCallback,
-                                             this)),
-      get_statistic_buffer_underrun_count_srv(nh_.advertiseService("get_statistic_buffer_underrun_count",
-                                             &PylonCameraNode::getStatisticBufferUnderrunCountCallback,
-                                             this)),
-      get_statistic_failed_packet_count_srv(nh_.advertiseService("get_statistic_failed_packet_count",
-                                             &PylonCameraNode::getStatisticFailedPacketCountCallback,
-                                             this)),
-      get_statistic_resend_request_count_srv(nh_.advertiseService("get_statistic_resend_request_count",
-                                             &PylonCameraNode::getStatisticResendRequestCountCallback,
-                                             this)),
-      get_statistic_missed_frame_count_srv(nh_.advertiseService("get_statistic_missed_frame_count",
-                                             &PylonCameraNode::getStatisticMissedFrameCountCallback,
-                                             this)),
-      get_statistic_resynchronization_count_srv(nh_.advertiseService("get_statistic_resynchronization_count",
-                                             &PylonCameraNode::getStatisticResynchronizationCountCallback,
-                                             this)),
-      set_chunk_mode_active_srv(nh_.advertiseService("set_chunk_mode_active",
-                                             &PylonCameraNode::setChunkModeActiveCallback,
-                                             this)),
-      get_chunk_mode_active_srv(nh_.advertiseService("get_chunk_mode_active",
-                                             &PylonCameraNode::getChunkModeActiveCallback,
-                                             this)),
-      set_chunk_selector_srv(nh_.advertiseService("set_chunk_selector",
-                                             &PylonCameraNode::setChunkSelectorCallback,
-                                             this)),
-      get_chunk_selector_srv(nh_.advertiseService("get_chunk_selector",
-                                             &PylonCameraNode::getChunkSelectorCallback,
-                                             this)),
-      set_chunk_enable_srv(nh_.advertiseService("set_chunk_enable",
-                                             &PylonCameraNode::setChunkEnableCallback,
-                                             this)),
-      get_chunk_enable_srv(nh_.advertiseService("get_chunk_enable",
-                                             &PylonCameraNode::getChunkEnableCallback,
-                                             this)),
-      get_chunk_timestamp_srv(nh_.advertiseService("get_chunk_timestamp",
-                                             &PylonCameraNode::getChunkTimestampCallback,
-                                             this)),
-      get_chunk_exposure_time_srv(nh_.advertiseService("get_chunk_exposure_time",
-                                             &PylonCameraNode::getChunkExposureTimeCallback,
-                                             this)),
-      set_chunk_exposure_time_srv(nh_.advertiseService("set_chunk_exposure_time",
-                                             &PylonCameraNode::setChunkExposureTimeCallback,
-                                             this)),
-      get_chunk_line_status_all_srv(nh_.advertiseService("get_chunk_line_status_all",
-                                             &PylonCameraNode::getChunkLineStatusAllCallback,
-                                             this)),
-      get_chunk_frame_counter_srv(nh_.advertiseService("get_chunk_frame_counter",
-                                             &PylonCameraNode::getChunkFramecounterCallback,
-                                             this)),
-      get_chunk_counter_value_srv(nh_.advertiseService("get_chunk_counter_value",
-                                             &PylonCameraNode::getChunkCounterValueCallback,
-                                             this)),
-      set_user_output_srvs_(),
-      pylon_camera_(nullptr),
-      it_(new image_transport::ImageTransport(nh_)),
-      img_raw_pub_(it_->advertiseCamera("image_raw", 1)),
-      img_rect_pub_(nullptr),
-      grab_imgs_raw_as_(
-              nh_,
-              "grab_images_raw",
-              boost::bind(&PylonCameraNode::grabImagesRawActionExecuteCB,
-                          this,
-                          _1),
-              false),
-      grab_imgs_rect_as_(nullptr),
-      pinhole_model_(nullptr),
-      cv_bridge_img_rect_(nullptr),
-      camera_info_manager_(new camera_info_manager::CameraInfoManager(nh_)),
-      sampling_indices_(),
-      brightness_exp_lut_(),
-      is_sleeping_(false)
+PylonCameraNode::PylonCameraNode(const bool init)
 {
+		if (init)
+		{
+				initClass(ros::NodeHandle("~"));
+		}
+}
+
+bool PylonCameraNode::initClass(const ros::NodeHandle& nh, const bool spin_while_initializing)
+{
+		nh_ = nh;
+		spin_while_initializing_ = spin_while_initializing;
+    set_binning_srv_ = nh_.advertiseService("set_binning", &PylonCameraNode::setBinningCallback, this);
+    set_roi_srv_ = nh_.advertiseService("set_roi", &PylonCameraNode::setROICallback, this);
+    set_exposure_srv_ = nh_.advertiseService("set_exposure", &PylonCameraNode::setExposureCallback, this);
+    set_gain_srv_ = nh_.advertiseService("set_gain", &PylonCameraNode::setGainCallback, this);
+    set_gamma_srv_ = nh_.advertiseService("set_gamma", &PylonCameraNode::setGammaCallback, this);
+    set_brightness_srv_ = nh_.advertiseService("set_brightness", &PylonCameraNode::setBrightnessCallback, this);
+    set_sleeping_srv_ = nh_.advertiseService("set_sleeping", &PylonCameraNode::setSleepingCallback, this);
+    set_offset_x_srv_ = nh_.advertiseService("set_offset_x", &PylonCameraNode::setOffsetXCallback, this);
+    set_offset_y_srv_ = nh_.advertiseService("set_offset_y", &PylonCameraNode::setOffsetYCallback, this);
+    reverse_x_srv_ = nh_.advertiseService("set_reverse_x", &PylonCameraNode::setReverseXCallback, this);
+    reverse_y_srv_ = nh_.advertiseService("set_reverse_y", &PylonCameraNode::setReverseYCallback, this);
+    set_black_level_srv_ = nh_.advertiseService("set_black_level", &PylonCameraNode::setBlackLevelCallback, this);
+    set_PGI_mode_srv_ = nh_.advertiseService("set_pgi_mode", &PylonCameraNode::setPGIModeCallback, this);
+    set_demosaicing_mode_srv_ = nh_.advertiseService("set_demosaicing_mode", &PylonCameraNode::setDemosaicingModeCallback, this);
+    set_noise_reduction_srv_ = nh_.advertiseService("set_noise_reduction", &PylonCameraNode::setNoiseReductionCallback, this);
+    set_sharpness_enhancement_srv_ = nh_.advertiseService("set_sharpness_enhancement", &PylonCameraNode::setSharpnessEnhancementCallback, this);
+    set_light_source_preset_srv_ = nh_.advertiseService("set_light_source_preset", &PylonCameraNode::setLightSourcePresetCallback, this);
+    set_balance_white_auto_srv_ = nh_.advertiseService("set_balance_white_auto", &PylonCameraNode::setBalanceWhiteAutoCallback, this);
+    set_sensor_readout_mode_srv_ = nh_.advertiseService("set_sensor_readout_mode", &PylonCameraNode::setSensorReadoutModeCallback, this);
+    set_acquisition_frame_count_srv_ = nh_.advertiseService("set_acquisition_frame_count", &PylonCameraNode::setAcquisitionFrameCountCallback, this);
+    set_trigger_selector_srv_ = nh_.advertiseService("set_trigger_selector", &PylonCameraNode::setTriggerSelectorCallback, this);
+    set_trigger_mode_srv_ = nh_.advertiseService("set_trigger_mode", &PylonCameraNode::setTriggerModeCallback, this);
+    execute_software_trigger_srv_ = nh_.advertiseService("execute_software_trigger", &PylonCameraNode::executeSoftwareTriggerCallback, this);
+    set_trigger_source_srv_ = nh_.advertiseService("set_trigger_source", &PylonCameraNode::setTriggerSourceCallback, this);
+    set_trigger_activation_srv_ = nh_.advertiseService("set_trigger_activation", &PylonCameraNode::setTriggerActivationCallback, this);
+    set_trigger_delay_srv_ = nh_.advertiseService("set_trigger_delay", &PylonCameraNode::setTriggerDelayCallback, this);
+    set_line_selector_srv_ = nh_.advertiseService("set_line_selector", &PylonCameraNode::setLineSelectorCallback, this);
+    set_line_mode_srv_ = nh_.advertiseService("set_line_mode", &PylonCameraNode::setLineModeCallback, this);
+    set_line_source_srv_ = nh_.advertiseService("set_line_source", &PylonCameraNode::setLineSourceCallback, this);
+    set_line_inverter_srv_ = nh_.advertiseService("set_line_inverter", &PylonCameraNode::setLineInverterCallback, this);
+    set_line_debouncer_time_srv_ = nh_.advertiseService("set_line_debouncer_time", &PylonCameraNode::setLineDebouncerTimeCallback, this);
+    set_user_set_selector_srv_ = nh_.advertiseService("select_user_set", &PylonCameraNode::setUserSetSelectorCallback, this);
+    save_user_set_srv_ = nh_.advertiseService("save_user_set", &PylonCameraNode::saveUserSetCallback, this);
+    load_user_set_srv_ = nh_.advertiseService("load_user_set", &PylonCameraNode::loadUserSetCallback, this);
+    set_user_set_default_selector_srv_ = nh_.advertiseService("select_default_user_set", &PylonCameraNode::setUserSetDefaultSelectorCallback, this);
+    set_device_link_throughput_limit_mode_srv_ = nh_.advertiseService("set_device_link_throughput_limit_mode", &PylonCameraNode::setDeviceLinkThroughputLimitModeCallback, this);
+    set_device_link_throughput_limit_srv_ = nh_.advertiseService("set_device_link_throughput_limit", &PylonCameraNode::setDeviceLinkThroughputLimitCallback, this);
+    reset_device_srv_ = nh_.advertiseService("reset_device", &PylonCameraNode::triggerDeviceResetCallback, this);
+    start_grabbing_srv_ = nh_.advertiseService("start_grabbing", &PylonCameraNode::StartGrabbingCallback, this);
+    stop_grabbing_srv_ = nh_.advertiseService("stop_grabbing", &PylonCameraNode::StopGrabbingCallback, this);
+    set_image_encoding_srv_ = nh_.advertiseService("set_image_encoding", &PylonCameraNode::setImageEncodingCallback, this);
+    set_max_transfer_size_srv_ = nh_.advertiseService("set_max_transfer_size", &PylonCameraNode::setMaxTransferSizeCallback, this);
+    set_gamma_selector_srv = nh_.advertiseService("set_gamma_selector", &PylonCameraNode::setGammaSelectorCallback, this);
+    gamma_enable_srv = nh_.advertiseService("gamma_enable", &PylonCameraNode::gammaEnableCallback, this);
+
+    set_grab_timeout_srv = nh_.advertiseService("set_grab_timeout", &PylonCameraNode::setGrabTimeoutCallback, this);
+    set_trigger_timeout_srv = nh_.advertiseService("set_trigger_timeout", &PylonCameraNode::setTriggerTimeoutCallback, this);
+    set_grabbing_strategy_srv = nh_.advertiseService("set_grabbing_strategy", &PylonCameraNode::setGrabbingStrategyCallback, this);
+    set_output_queue_size_srv = nh_.advertiseService("set_output_queue_size", &PylonCameraNode::setOutputQueueSizeCallback, this);
+    set_white_balance_srv = nh_.advertiseService("set_white_balance", &PylonCameraNode::setWhiteBalanceCallback, this);
+    set_max_num_buffer_srv = nh_.advertiseService("set_max_num_buffer", &PylonCameraNode::setMaxNumBufferCallback, this);
+    get_max_num_buffer_srv = nh_.advertiseService("get_max_num_buffer", &PylonCameraNode::getMaxNumBufferCallback, this);
+    get_statistic_total_buffer_count_srv = nh_.advertiseService("get_statistic_total_buffer_count", &PylonCameraNode::getStatisticTotalBufferCountCallback, this);
+    get_statistic_failed_buffer_count_srv = nh_.advertiseService("get_statistic_failed_buffer_count", &PylonCameraNode::getStatisticFailedBufferCountCallback, this);
+    get_statistic_buffer_underrun_count_srv = nh_.advertiseService("get_statistic_buffer_underrun_count", &PylonCameraNode::getStatisticBufferUnderrunCountCallback, this);
+    get_statistic_failed_packet_count_srv = nh_.advertiseService("get_statistic_failed_packet_count", &PylonCameraNode::getStatisticFailedPacketCountCallback, this);
+    get_statistic_resend_request_count_srv = nh_.advertiseService("get_statistic_resend_request_count", &PylonCameraNode::getStatisticResendRequestCountCallback, this);
+    get_statistic_missed_frame_count_srv = nh_.advertiseService("get_statistic_missed_frame_count", &PylonCameraNode::getStatisticMissedFrameCountCallback, this);
+    get_statistic_resynchronization_count_srv = nh_.advertiseService("get_statistic_resynchronization_count", &PylonCameraNode::getStatisticResynchronizationCountCallback, this);
+    set_chunk_mode_active_srv = nh_.advertiseService("set_chunk_mode_active", &PylonCameraNode::setChunkModeActiveCallback, this);
+    get_chunk_mode_active_srv = nh_.advertiseService("get_chunk_mode_active", &PylonCameraNode::getChunkModeActiveCallback, this);
+    set_chunk_selector_srv = nh_.advertiseService("set_chunk_selector", &PylonCameraNode::setChunkSelectorCallback, this);
+    get_chunk_selector_srv = nh_.advertiseService("get_chunk_selector", &PylonCameraNode::getChunkSelectorCallback, this);
+    set_chunk_enable_srv = nh_.advertiseService("set_chunk_enable", &PylonCameraNode::setChunkEnableCallback, this);
+    get_chunk_enable_srv = nh_.advertiseService("get_chunk_enable", &PylonCameraNode::getChunkEnableCallback, this);
+    get_chunk_timestamp_srv = nh_.advertiseService("get_chunk_timestamp", &PylonCameraNode::getChunkTimestampCallback, this);
+    get_chunk_exposure_time_srv = nh_.advertiseService("get_chunk_exposure_time", &PylonCameraNode::getChunkExposureTimeCallback, this);
+    set_chunk_exposure_time_srv = nh_.advertiseService("set_chunk_exposure_time", &PylonCameraNode::setChunkExposureTimeCallback, this);
+    get_chunk_line_status_all_srv = nh_.advertiseService("get_chunk_line_status_all", &PylonCameraNode::getChunkLineStatusAllCallback, this);
+    get_chunk_frame_counter_srv = nh_.advertiseService("get_chunk_frame_counter", &PylonCameraNode::getChunkFramecounterCallback, this);
+    get_chunk_counter_value_srv = nh_.advertiseService("get_chunk_counter_value", &PylonCameraNode::getChunkCounterValueCallback, this);
+
+    /* set_user_output_srvs_(), */
+    /* sampling_indices_(), */
+    /* brightness_exp_lut_(), */
+
+    pylon_camera_ = nullptr;
+    it_ = std::make_unique<image_transport::ImageTransport>(nh_);
+    img_raw_pub_ = it_->advertiseCamera("image_raw", 1);
+    img_rect_pub_ = nullptr;
+    grab_imgs_raw_as_ = std::make_unique<GrabImagesAS>(nh_, "grab_images_raw", boost::bind(&PylonCameraNode::grabImagesRawActionExecuteCB, this, _1), false);
+    grab_imgs_rect_as_ = nullptr;
+    pinhole_model_ = nullptr;
+    cv_bridge_img_rect_ = nullptr;
+    camera_info_manager_ = std::make_unique<camera_info_manager::CameraInfoManager>(nh_);
+    is_sleeping_ = false;
     diagnostics_updater_.setHardwareID("none");
     diagnostics_updater_.add("camera_availability", this, &PylonCameraNode::create_diagnostics);
     diagnostics_updater_.add("intrinsic_calibration", this, &PylonCameraNode::create_camera_info_diagnostics);
@@ -285,7 +150,7 @@ PylonCameraNode::PylonCameraNode()
     componentStatusPublisher = nh_.advertise<dnb_msgs::ComponentStatus>("/pylon_camera_node/status", 5, true); // DNB component status publisher
     currentParamsPublisher = nh_.advertise<camera_control_msgs::currentParams>("/pylon_camera_node/currentParams", 5, true); // current camera params publisher
 
-    init();
+    return initCamera(spin_while_initializing_);
 }
 
 void PylonCameraNode::create_diagnostics(diagnostic_updater::DiagnosticStatusWrapper &stat)
@@ -328,7 +193,7 @@ void PylonCameraNode::diagnostics_timer_callback_(const ros::TimerEvent&)
     diagnostics_updater_.update();
 }
 
-void PylonCameraNode::init()
+bool PylonCameraNode::initCamera(const bool do_spin)
 {
     // reading all necessary parameter to open the desired camera from the
     // ros-parameter-server. In case that invalid parameter values can be
@@ -342,22 +207,21 @@ void PylonCameraNode::init()
     // communication with the device and enabling the desired startup-settings
     if ( !initAndRegister() )
     {
-        ros::shutdown();
-        return;
+        return false;
     }
 
     // starting the grabbing procedure with the desired image-settings
     if ( !startGrabbing() )
     {
-        ros::shutdown();
-        return;
+        return false;
     }
+
+    return true;
 }
 
 bool PylonCameraNode::initAndRegister()
 {
-    pylon_camera_ = PylonCamera::create(
-                                    pylon_camera_parameter_set_.deviceUserID());
+    pylon_camera_ = PylonCamera::create(pylon_camera_parameter_set_.deviceUserID());
 
     if ( pylon_camera_ == nullptr )
     {
@@ -372,8 +236,7 @@ bool PylonCameraNode::initAndRegister()
         ros::Rate r(0.5);
         while ( ros::ok() && pylon_camera_ == nullptr )
         {
-            pylon_camera_ = PylonCamera::create(
-                                    pylon_camera_parameter_set_.deviceUserID());
+            pylon_camera_ = PylonCamera::create(pylon_camera_parameter_set_.deviceUserID());
             if ( ros::Time::now() > end )
             {
                 ROS_WARN_STREAM("No camera present. Keep waiting ...");
@@ -386,7 +249,10 @@ bool PylonCameraNode::initAndRegister()
                 end = ros::Time::now() + ros::Duration(15.0);
             }
             r.sleep();
-            ros::spinOnce();
+						if (spin_while_initializing_)
+						{
+								ros::spinOnce();
+						}
         }
     }
 
@@ -451,7 +317,7 @@ bool PylonCameraNode::startGrabbing()
 {
     if ( !pylon_camera_->startGrabbing(pylon_camera_parameter_set_) )
     {
-        ROS_ERROR("Error while start grabbing");
+        ROS_ERROR("Error while starting grabbing");
         return false;
     }
 
@@ -489,7 +355,11 @@ bool PylonCameraNode::startGrabbing()
     // step = full row length in bytes, img_size = (step * rows), imagePixelDepth
     // already contains the number of channels
     img_raw_msg_.step = img_raw_msg_.width * pylon_camera_->imagePixelDepth();
-    if ( !camera_info_manager_->setCameraName(pylon_camera_->deviceUserID()) )
+
+    std::string camera_name = pylon_camera_->deviceUserID();
+    if (camera_name.empty())
+      camera_name = "basler";
+    if ( !camera_info_manager_->setCameraName(camera_name) )
     { 
         // valid name contains only alphanumeric signs and '_'
         ROS_WARN_STREAM("[" << pylon_camera_->deviceUserID()
@@ -499,7 +369,7 @@ bool PylonCameraNode::startGrabbing()
                          pylon_camera_->imageRows(),
                          pylon_camera_->imageCols(),
                          pylon_camera_parameter_set_.downsampling_factor_exp_search_);
-    grab_imgs_raw_as_.start();
+    grab_imgs_raw_as_->start();
 
     // Initial setting of the CameraInfo-msg, assuming no calibration given
     CameraInfo initial_cam_info;
@@ -635,13 +505,13 @@ void PylonCameraNode::setupRectification()
 {
     if ( !img_rect_pub_ )
     {
-        img_rect_pub_ = new image_transport::Publisher(it_->advertise("image_rect", 1));
+        img_rect_pub_ = std::make_unique<image_transport::Publisher>(it_->advertise("image_rect", 1));
     }
 
     if ( !grab_imgs_rect_as_ )
     {
         grab_imgs_rect_as_ =
-            new GrabImagesAS(nh_,
+            std::make_unique<GrabImagesAS>(nh_,
                              "grab_images_rect",
                              boost::bind(
                                 &PylonCameraNode::grabImagesRectActionExecuteCB,
@@ -653,13 +523,13 @@ void PylonCameraNode::setupRectification()
 
     if ( !pinhole_model_ )
     {
-        pinhole_model_ = new image_geometry::PinholeCameraModel();
+        pinhole_model_ = std::make_unique<image_geometry::PinholeCameraModel>();
     }
 
     pinhole_model_->fromCameraInfo(camera_info_manager_->getCameraInfo());
     if ( !cv_bridge_img_rect_ )
     {
-        cv_bridge_img_rect_ = new cv_bridge::CvImage();
+        cv_bridge_img_rect_ = std::make_unique<cv_bridge::CvImage>();
     }
     cv_bridge_img_rect_->header = img_raw_msg_.header;
     cv_bridge_img_rect_->encoding = img_raw_msg_.encoding;
@@ -709,7 +579,6 @@ void PylonCameraNode::spin()
         {
           componentStatusPublisher.publish(cm_status);
         }
-        delete pylon_camera_;
         pylon_camera_ = nullptr;
         for ( ros::ServiceServer& user_output_srv : set_user_output_srvs_ )
         {
@@ -717,7 +586,7 @@ void PylonCameraNode::spin()
         }
         set_user_output_srvs_.clear();
         ros::Duration(0.5).sleep();  // sleep for half a second
-        init();
+        initCamera(spin_while_initializing_);
         return;
     }
     // images were published if subscribers are available or if someone calls
@@ -777,6 +646,23 @@ bool PylonCameraNode::grabImage()
     boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_); 
     if ( !pylon_camera_->grab(img_raw_msg_.data) )
     {
+        /* ROS_ERROR("[%s]: Could not grab image. Shutting down to respawn.", ros::this_node::getName().c_str()); */
+        /* ros::shutdown(); */
+        ROS_ERROR("[%s]: Could not grab image. Trying to reset.", ros::this_node::getName().c_str());
+        cm_status.status_id = dnb_msgs::ComponentStatus::ERROR;
+        cm_status.status_msg = "Could not grab image, trying to reset";
+        if (pylon_camera_parameter_set_.enable_status_publisher_)
+        {
+          componentStatusPublisher.publish(cm_status);
+        }
+        pylon_camera_ = nullptr;
+        for ( ros::ServiceServer& user_output_srv : set_user_output_srvs_ )
+        {
+            user_output_srv.shutdown();
+        }
+        set_user_output_srvs_.clear();
+        ros::Duration(0.5).sleep();  // sleep for half a second
+        initCamera(spin_while_initializing_);
         return false;
     }
     img_raw_msg_.header.stamp = ros::Time::now(); 
@@ -787,8 +673,8 @@ void PylonCameraNode::grabImagesRawActionExecuteCB(
                     const camera_control_msgs::GrabImagesGoal::ConstPtr& goal)
 {
     camera_control_msgs::GrabImagesResult result;
-    result = grabImagesRaw(goal, &grab_imgs_raw_as_);
-    grab_imgs_raw_as_.setSucceeded(result);
+    result = grabImagesRaw(goal, grab_imgs_raw_as_);
+    grab_imgs_raw_as_->setSucceeded(result);
 }
 
 void PylonCameraNode::grabImagesRectActionExecuteCB(
@@ -803,7 +689,7 @@ void PylonCameraNode::grabImagesRectActionExecuteCB(
     }
     else
     {
-        result = grabImagesRaw(goal, std::ref(grab_imgs_rect_as_));
+        result = grabImagesRaw(goal, grab_imgs_rect_as_);
         if ( !result.success )
         {
             grab_imgs_rect_as_->setSucceeded(result);
@@ -828,7 +714,7 @@ void PylonCameraNode::grabImagesRectActionExecuteCB(
 
 camera_control_msgs::GrabImagesResult PylonCameraNode::grabImagesRaw(
         const camera_control_msgs::GrabImagesGoal::ConstPtr& goal,
-        GrabImagesAS* action_server)
+        std::unique_ptr<GrabImagesAS>& action_server)
 {
     camera_control_msgs::GrabImagesResult result;
     camera_control_msgs::GrabImagesFeedback feedback;
@@ -3409,7 +3295,7 @@ void PylonCameraNode::currentParamPub()
   boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
   if ( !pylon_camera_->isReady() )
     {
-      ROS_WARN("Error in triggerDeviceReset(): pylon_camera_ is not ready!");
+      ROS_WARN("Error in currentParamPub(): pylon_camera_ is not ready!");
       params.message = "pylon camera is not ready!";
       params.sucess = false;
     }
@@ -3465,40 +3351,10 @@ void PylonCameraNode::currentParamPub()
 
 PylonCameraNode::~PylonCameraNode()
 {
-    if ( pylon_camera_ )
-    {
-        delete pylon_camera_;
-        pylon_camera_ = nullptr;
-    }
-    if ( it_ )
-    {
-        delete it_;
-        it_ = nullptr;
-    }
-    if ( grab_imgs_rect_as_ )
-    {
-        grab_imgs_rect_as_->shutdown();
-        delete grab_imgs_rect_as_;
-        grab_imgs_rect_as_ = nullptr;
-    }
-
-    if ( img_rect_pub_ )
-    {
-        delete img_rect_pub_;
-        img_rect_pub_ = nullptr;
-    }
-
-    if ( cv_bridge_img_rect_ )
-    {
-        delete cv_bridge_img_rect_;
-        cv_bridge_img_rect_ = nullptr;
-    }
-
-    if ( pinhole_model_ )
-    {
-        delete pinhole_model_;
-        pinhole_model_ = nullptr;
-    }
+  if (grab_imgs_rect_as_)
+  {
+      grab_imgs_rect_as_->shutdown();
+  }
 }
 
 }  // namespace pylon_camera

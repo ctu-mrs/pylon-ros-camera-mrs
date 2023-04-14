@@ -1,0 +1,6 @@
+<library path="lib/libPylonCameraNodelet">
+  <class name="pylon_camera/PylonCameraNodelet" type="pylon_camera::PylonCameraNodelet" base_class_type="nodelet::Nodelet">
+    <description>Nodeleted version of the camera driver</description>
+  </class>
+</library>
+

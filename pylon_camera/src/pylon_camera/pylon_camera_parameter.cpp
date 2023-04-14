@@ -36,11 +36,6 @@ namespace pylon_camera
 {
 
 PylonCameraParameter::PylonCameraParameter() :
-        camera_frame_("pylon_camera"),
-        device_user_id_(""),
-        frame_rate_(5.0),
-        camera_info_url_(""),
-        image_encoding_(""),
         binning_x_(1),
         binning_y_(1),
         binning_x_given_(false),
@@ -66,19 +61,24 @@ PylonCameraParameter::PylonCameraParameter() :
         mtu_size_(3000),
         enable_status_publisher_(false),
         enable_current_params_publisher_(false),
-        inter_pkg_delay_(1000),
         startup_user_set_(""),
+        inter_pkg_delay_(1000),
         shutter_mode_(SM_DEFAULT),
-        auto_flash_(false), 
+        auto_flash_(false),
         grab_timeout_(500),
         trigger_timeout_(5000),
-	grab_strategy_(0),
+	      grab_strategy_(0),
         white_balance_auto_(0),
         white_balance_auto_given_(false),
         white_balance_ratio_red_(1.0),
         white_balance_ratio_green_(1.0),
         white_balance_ratio_blue_(1.0),
         white_balance_ratio_given_(false)
+        camera_frame_("pylon_camera"),
+        device_user_id_(""),
+        frame_rate_(5.0),
+        camera_info_url_(""),
+        image_encoding_("")
 {}
 
 PylonCameraParameter::~PylonCameraParameter()

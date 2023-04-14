@@ -1,8 +1,15 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(pylon_camera)
+project(pylon_camera VERSION 666.6)
+cmake_policy(SET CMP0048 NEW)
 
-add_definitions("-std=gnu++11")
-#set(CMAKE_CXX_FLAGS "-g -Wall -Wno-unknown-pragmas -Wno-delete-non-virtual-dtor -Wno-unused-variable")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+add_compile_options("-Wall")
+add_compile_options("-Wextra")
+add_compile_options("-g")
+
 set(
     CATKIN_COMPONENTS
      actionlib
@@ -13,6 +20,7 @@ set(
      image_geometry
      image_transport
      roscpp
+     nodelet
      roslaunch
      sensor_msgs
 )
@@ -49,6 +57,7 @@ roslint_cpp(
     src/${PROJECT_NAME}/encoding_conversions.cpp
     src/${PROJECT_NAME}/main.cpp
     src/${PROJECT_NAME}/${PROJECT_NAME}_node.cpp
+    src/${PROJECT_NAME}/${PROJECT_NAME}_nodelet.cpp
     src/${PROJECT_NAME}/${PROJECT_NAME}_parameter.cpp
     src/${PROJECT_NAME}/${PROJECT_NAME}.cpp
     src/${PROJECT_NAME}/write_device_user_id_to_camera.cpp
@@ -56,6 +65,7 @@ roslint_cpp(
     include/${PROJECT_NAME}/binary_exposure_search.h
     include/${PROJECT_NAME}/encoding_conversions.h
     include/${PROJECT_NAME}/${PROJECT_NAME}_node.h
+    include/${PROJECT_NAME}/${PROJECT_NAME}_nodelet.h
     include/${PROJECT_NAME}/${PROJECT_NAME}_parameter.h
     include/${PROJECT_NAME}/${PROJECT_NAME}.h
     include/${PROJECT_NAME}/internal/${PROJECT_NAME}.h
@@ -105,6 +115,17 @@ target_link_libraries(
     ${PROJECT_NAME}_node
      ${PROJECT_NAME}
 )
+
+add_library(
+    PylonCameraNodelet
+     src/${PROJECT_NAME}/${PROJECT_NAME}_nodelet.cpp
+)
+
+target_link_libraries(
+    PylonCameraNodelet
+     ${PROJECT_NAME}
+)
+
 
 add_executable(
     write_device_user_id_to_camera
@@ -163,7 +184,11 @@ install(
      scripts/grab_and_save_image_action_server.py
      scripts/result_bag_to_action.py
      scripts/sequence_to_file.py
+
+     #TODO: these will have to be compared
+     scripts/toggle_camera
      scripts/toggle_camera.py
+
     DESTINATION
      ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

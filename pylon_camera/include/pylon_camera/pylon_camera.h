@@ -35,6 +35,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 
 #include <pylon_camera/pylon_camera_parameter.h>
 #include <pylon_camera/binary_exposure_search.h>
@@ -58,7 +59,7 @@ public:
      * Create a new PylonCamera instance. It will return the first camera that could be found.
      * @return new PylonCamera instance or NULL if no camera was found.
      */
-    static PylonCamera* create();
+    static std::unique_ptr<PylonCamera> create();
 
     /**
      * Create a new PylonCamera instance based on the DeviceUserID of the camera.
@@ -66,7 +67,7 @@ public:
      * first camera that could be found is returned.
      * @return new PylonCamera instance or NULL if the camera was not found.
      */
-    static PylonCamera* create(const std::string& device_user_id);
+    static std::unique_ptr<PylonCamera> create(const std::string& device_user_id);
 
     /**
      * Configures the camera according to the software trigger mode.
