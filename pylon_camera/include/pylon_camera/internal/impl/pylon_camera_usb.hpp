@@ -444,13 +444,13 @@ int PylonUSBCamera::getAcquisitionFrameCount()
 }
 
 template <>
-std::string PylonUSBCamera::setGammaSelector(const int& gammaSelector)
+std::string PylonUSBCamera::setGammaSelector([[maybe_unused]] const int& gammaSelector)
 {
     return "Error, the connect camera not supporting this feature";
 }
 
 template <>
-std::string PylonUSBCamera::gammaEnable(const bool& enable)
+std::string PylonUSBCamera::gammaEnable([[maybe_unused]] const bool& enable)
 {
     return "Error, the connect camera not supporting this feature";
 }

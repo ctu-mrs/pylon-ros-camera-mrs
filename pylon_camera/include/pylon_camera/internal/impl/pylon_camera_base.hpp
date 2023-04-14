@@ -415,7 +415,7 @@ bool PylonCameraImpl<CameraTrait>::grab(std::vector<uint8_t>& image)
     std::string gen_api_encoding(cam_->PixelFormat.ToString().c_str());
     if (encoding_conversions::is_12_bit_ros_enc(ros_enc) && (gen_api_encoding == "BayerRG12" || gen_api_encoding == "BayerBG12" || gen_api_encoding == "BayerGB12" || gen_api_encoding == "BayerGR12" || gen_api_encoding == "Mono12") ){
         const uint16_t *convert_bits = reinterpret_cast<uint16_t*>(ptr_grab_result->GetBuffer());
-        for (int i = 0; i < img_size_byte_ / 2; i++){
+        for (int i = 0; i < int(img_size_byte_ / 2); i++){
             shift_array[i] = convert_bits[i] << 4;
         }
         image.assign((uint8_t *) shift_array, (uint8_t *) shift_array + img_size_byte_);
@@ -456,7 +456,7 @@ bool PylonCameraImpl<CameraTrait>::grab(uint8_t* image)
 
     if (encoding_conversions::is_12_bit_ros_enc(ros_enc)){
         const uint16_t *convert_bits = reinterpret_cast<uint16_t*>(ptr_grab_result->GetBuffer());
-        for (int i = 0; i < img_size_byte_ / 2; i++){
+        for (int i = 0; i < (int)(img_size_byte_ / 2); i++){
             shift_array[i] = convert_bits[i] << 4;
         }
         memcpy(image, (uint8_t *) shift_array, img_size_byte_);
@@ -505,7 +505,7 @@ bool PylonCameraImpl<CameraTrait>::grab(Pylon::CGrabResultPtr& grab_result)
         }
         else
         {   
-            if ((! cam_->TriggerSource.GetValue() == TriggerSourceEnums::TriggerSource_Software) && (cam_->TriggerMode.GetValue() == TriggerModeEnums::TriggerMode_On))
+            if ((!( cam_->TriggerSource.GetValue() == TriggerSourceEnums::TriggerSource_Software)) && (cam_->TriggerMode.GetValue() == TriggerModeEnums::TriggerMode_On))
             {
                 ROS_ERROR_STREAM("Waiting for Trigger signal");
             }
@@ -708,7 +708,7 @@ bool PylonCameraImpl<CameraTraitT>::setROI(const sensor_msgs::RegionOfInterest t
             cam_->OffsetY.SetValue(0);
             cam_->Width.SetValue(max_image_width);
             cam_->Height.SetValue(max_image_height);
-            sensor_msgs::RegionOfInterest current_roi = currentROI();
+            /* sensor_msgs::RegionOfInterest current_roi = currentROI(); */
             // Force minimum increment of 2 as some cameras wrongly declare that 
             // they have an increment of 1 while it is 2
             if (height_inc == 1)
@@ -716,14 +716,14 @@ bool PylonCameraImpl<CameraTraitT>::setROI(const sensor_msgs::RegionOfInterest t
             if (width_inc == 1)
                 width_inc = 2;
 
-            if (width_to_set > max_image_width)
+            if (width_to_set > (size_t)max_image_width)
             {
                 ROS_WARN_STREAM("Desired width("
                         << width_to_set << ") unreachable! Setting to upper "
                         << "limit: " << max_image_width);
                 width_to_set = max_image_width;
             }
-            else if (width_to_set < min_image_width)
+            else if (width_to_set < (size_t)min_image_width)
             {
                 ROS_WARN_STREAM("Desired width("
                         << width_to_set << ") unreachable! Setting to lower "
@@ -731,14 +731,14 @@ bool PylonCameraImpl<CameraTraitT>::setROI(const sensor_msgs::RegionOfInterest t
                 width_to_set = min_image_width;
             }
 
-            if (height_to_set > max_image_height)
+            if (height_to_set > (size_t)max_image_height)
             {
                 ROS_WARN_STREAM("Desired height("
                         <<height_to_set << ") unreachable! Setting to upper "
                         << "limit: " << max_image_height);
                 height_to_set = max_image_height;
             }
-            else if (height_to_set < min_image_height)
+            else if (height_to_set < (size_t)min_image_height)
             {
                 ROS_WARN_STREAM("Desired height("
                         << height_to_set << ") unreachable! Setting to lower "
@@ -754,7 +754,7 @@ bool PylonCameraImpl<CameraTraitT>::setROI(const sensor_msgs::RegionOfInterest t
                         << adapted_offset_x <<")");
                 offset_x_to_set = adapted_offset_x;
             }
-            if (width_to_set + offset_x_to_set >  max_image_width)
+            if (width_to_set + offset_x_to_set >  (size_t)max_image_width)
             {
                 int64_t adapted_offset_x = max_image_width - width_to_set;
                 adapted_offset_x -= adapted_offset_x % width_inc;
@@ -773,7 +773,7 @@ bool PylonCameraImpl<CameraTraitT>::setROI(const sensor_msgs::RegionOfInterest t
                         << adapted_offset_y <<")");
                 offset_y_to_set = adapted_offset_y;
             }
-            if (height_to_set + offset_y_to_set >  max_image_height)
+            if (height_to_set + offset_y_to_set >  (size_t)max_image_height)
             {
                 int64_t adapted_offset_y = max_image_height - height_to_set;
                 adapted_offset_y -= adapted_offset_y % height_inc;
@@ -832,14 +832,14 @@ bool PylonCameraImpl<CameraTraitT>::setBinningX(const size_t& target_binning_x,
         {
             cam_->StopGrabbing();
             size_t binning_x_to_set = target_binning_x;
-            if ( binning_x_to_set < cam_->BinningHorizontal.GetMin() )
+            if ( binning_x_to_set < (size_t)(cam_->BinningHorizontal.GetMin()) )
             {
                 ROS_WARN_STREAM("Desired horizontal binning_x factor("
                         << binning_x_to_set << ") unreachable! Setting to lower "
                         << "limit: " << cam_->BinningHorizontal.GetMin());
                 binning_x_to_set = cam_->BinningHorizontal.GetMin();
             }
-            else if ( binning_x_to_set > cam_->BinningHorizontal.GetMax() )
+            else if ( binning_x_to_set > (size_t)(cam_->BinningHorizontal.GetMax()) )
             {
                 ROS_WARN_STREAM("Desired horizontal binning_x factor("
                         << binning_x_to_set << ") unreachable! Setting to upper "
@@ -880,14 +880,14 @@ bool PylonCameraImpl<CameraTraitT>::setBinningY(const size_t& target_binning_y,
         {
             cam_->StopGrabbing();
             size_t binning_y_to_set = target_binning_y;
-            if ( binning_y_to_set < cam_->BinningVertical.GetMin() )
+            if ( binning_y_to_set < (size_t)(cam_->BinningVertical.GetMin()) )
             {
                 ROS_WARN_STREAM("Desired vertical binning_y factor("
                         << binning_y_to_set << ") unreachable! Setting to lower "
                         << "limit: " << cam_->BinningVertical.GetMin());
                 binning_y_to_set = cam_->BinningVertical.GetMin();
             }
-            else if ( binning_y_to_set > cam_->BinningVertical.GetMax() )
+            else if ( binning_y_to_set > (size_t)(cam_->BinningVertical.GetMax()) )
             {
                 ROS_WARN_STREAM("Desired vertical binning_y factor("
                         << binning_y_to_set << ") unreachable! Setting to upper "
@@ -963,7 +963,7 @@ bool PylonCameraImpl<CameraTraitT>::setExposure(const float& target_exposure,
 
 template <typename CameraTraitT>
 bool PylonCameraImpl<CameraTraitT>::setAutoflash(
-                        const std::map<int, bool> flash_on_lines)
+                        [[maybe_unused]] const std::map<int, bool> flash_on_lines)
 {
     ROS_ERROR_STREAM("Not implemented for this camera type");
     return false;
@@ -1121,7 +1121,7 @@ bool PylonCameraImpl<CameraTraitT>::setBrightness(const int& target_brightness,
                         cam_->GainAuto.SetValue(GainAutoEnums::GainAuto_Once);
                     }
                 }
-                else  // target > 205 -> pre control to 205
+                else  // target > 205 -> pre control to 205 - TODO: shouldn't here be comparison with autoTargetBrightnessMax ?
                 {
                     if ( GenApi::IsAvailable(cam_->AutoTargetValue) )
                     {
@@ -1187,7 +1187,7 @@ bool PylonCameraImpl<CameraTraitT>::setExtendedBrightness(const int& target_brig
                                                           currentExposure(),
                                                           currentExposure());
         }
-        else  // Range from [206-255]
+        else  // Range from [206-255]  - TODO: shouldn't here be comparison with autoTargetBrightnessMax ?
         {
             binary_exp_search_ = new BinaryExposureSearch(target_brightness,
                                                           currentExposure(),

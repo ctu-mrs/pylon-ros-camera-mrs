@@ -317,6 +317,14 @@ public:
     int trigger_timeout_;
 
     /**
+    * Camera grab strategy 
+    * 0 = GrabStrategy_OneByOne
+    * 1 = GrabStrategy_LatestImageOnly
+    * 2 = GrabStrategy_LatestImages
+    */
+
+    int grab_strategy_;
+    /**
     * camera white balance auto 
     */
     int white_balance_auto_;
@@ -329,14 +337,6 @@ public:
     float white_balance_ratio_green_;
     float white_balance_ratio_blue_;
     bool white_balance_ratio_given_;
-
-    /**
-    * Camera grab strategy 
-    * 0 = GrabStrategy_OneByOne
-    * 1 = GrabStrategy_LatestImageOnly
-    * 2 = GrabStrategy_LatestImages
-    */
-    int grab_strategy_;
 
 
 protected:

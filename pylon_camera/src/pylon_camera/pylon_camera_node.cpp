@@ -193,7 +193,7 @@ void PylonCameraNode::diagnostics_timer_callback_(const ros::TimerEvent&)
     diagnostics_updater_.update();
 }
 
-bool PylonCameraNode::initCamera(const bool do_spin)
+bool PylonCameraNode::initCamera(const bool do_spin) //TODO: shouldn't the do_spin be applied?
 {
     // reading all necessary parameter to open the desired camera from the
     // ros-parameter-server. In case that invalid parameter values can be

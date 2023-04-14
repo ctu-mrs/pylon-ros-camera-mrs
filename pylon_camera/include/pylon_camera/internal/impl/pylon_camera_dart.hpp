@@ -72,14 +72,14 @@ bool PylonDARTCamera::applyCamSpecificStartupSettings(const PylonCameraParameter
     return true;
 }
 
-bool PylonDARTCamera::setUserOutput(int output_id, bool value)
+bool PylonDARTCamera::setUserOutput([[maybe_unused]] int output_id, [[maybe_unused]] bool value)
 {
     ROS_ERROR("Dart camera has no digital output.");
     return false;
 }
 
-bool PylonDARTCamera::setupSequencer(const std::vector<float>& exposure_times,
-                                     std::vector<float>& exposure_times_set)
+bool PylonDARTCamera::setupSequencer([[maybe_unused]] const std::vector<float>& exposure_times,
+                                     [[maybe_unused]] std::vector<float>& exposure_times_set)
 {
     ROS_ERROR("Sequencer Mode for Dart Cameras not yet implemented");
     return false;
@@ -103,7 +103,7 @@ bool PylonDARTCamera::grab(Pylon::CGrabResultPtr& grab_result)
         }
         else
         { 
-            if (! cam_->TriggerSource.GetValue() == TriggerSourceEnums::TriggerSource_Software)
+            if (! (cam_->TriggerSource.GetValue() == TriggerSourceEnums::TriggerSource_Software))
             {
                 ROS_ERROR_STREAM("Waiting for Hardware Trigger");
             }

@@ -1018,7 +1018,7 @@ std::string PylonGigECamera::setLineDebouncerTime(const float& value)
 }
 
 template <>
-std::string PylonGigECamera::setDeviceLinkThroughputLimitMode(const bool& turnOn)
+std::string PylonGigECamera::setDeviceLinkThroughputLimitMode([[maybe_unused]] const bool& turnOn)
 {
     return "Trying to change the device link throughput limit mode. The connected Camera not supporting this feature";
 }
@@ -1030,7 +1030,7 @@ int PylonGigECamera::getDeviceLinkThroughputLimitMode()
 }
 
 template <>
-std::string PylonGigECamera::setDeviceLinkThroughputLimit(const int& limit)
+std::string PylonGigECamera::setDeviceLinkThroughputLimit([[maybe_unused]] const int& limit)
 {
     return "Trying to change the device link throughput limit. The connected Camera not supporting this feature";
 }
@@ -1425,7 +1425,7 @@ int PylonGigECamera::getUserSetDefaultSelector()
 }
 
 template <>
-std::string PylonGigECamera::setMaxTransferSize(const int& maxTransferSize)
+std::string PylonGigECamera::setMaxTransferSize([[maybe_unused]] const int& maxTransferSize)
 {
     return "Error, this feature supported by USB Cameras only";
 

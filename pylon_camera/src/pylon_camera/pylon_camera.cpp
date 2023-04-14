@@ -46,7 +46,8 @@ enum PYLON_CAM_TYPE
 };
 
 PylonCamera::PylonCamera()
-    : device_user_id_("")
+    : binary_exp_search_(nullptr)
+    , device_user_id_("")
     , img_rows_(0)
     , img_cols_(0)
     , img_size_byte_(0)
@@ -54,7 +55,6 @@ PylonCamera::PylonCamera()
     , is_ready_(false)
     , is_binary_exposure_search_running_(false)
     , max_brightness_tolerance_(2.5)
-    , binary_exp_search_(nullptr)
 {}
 
 PYLON_CAM_TYPE detectPylonCamType(const Pylon::CDeviceInfo& device_info)
@@ -178,7 +178,7 @@ std::unique_ptr<PylonCamera> PylonCamera::create(const std::string& device_user_
                       std::unique_ptr<PylonCamera> new_cam_ptr = createFromDevice(cam_type,
                                                 tl_factory.CreateDevice(*it));
                     new_cam_ptr->device_user_id_ = it->GetUserDefinedName();
-                    return std::move(new_cam_ptr);
+                    return new_cam_ptr;
                     }
                 }
                 Pylon::PylonTerminate();
