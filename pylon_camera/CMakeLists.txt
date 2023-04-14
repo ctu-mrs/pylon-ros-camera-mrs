@@ -184,9 +184,6 @@ install(
      scripts/grab_and_save_image_action_server.py
      scripts/result_bag_to_action.py
      scripts/sequence_to_file.py
-
-     #TODO: these will have to be compared
-     scripts/toggle_camera
      scripts/toggle_camera.py
 
     DESTINATION
