@@ -73,7 +73,7 @@ PylonCameraParameter::PylonCameraParameter() :
         white_balance_ratio_red_(1.0),
         white_balance_ratio_green_(1.0),
         white_balance_ratio_blue_(1.0),
-        white_balance_ratio_given_(false)
+        white_balance_ratio_given_(false),
         camera_frame_("pylon_camera"),
         device_user_id_(""),
         frame_rate_(5.0),
