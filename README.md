@@ -1,6 +1,15 @@
 # pylon-ROS-camera
 
 The official pylon ROS driver for [Basler](http://www.baslerweb.com/) GigE Vision and USB3 Vision cameras
++
+Forked from [github.com/basler/pylon-ros-camera](https://github.com/basler/pylon-ros-camera/commit/ed094fad02eed38af830a052c7420befc6483ef3) and updated for use in MRS.
+
+TODO:
+  * [ ] Manual on: how to recognize IDs of cameras and alias them (see this [PR](https://github.com/basler/pylon-ros-camera/pull/65))
+  * [ ] Nodeletize
+  * [ ] Add [hardware trigger support](https://github.com/basler/pylon-ros-camera/pull/46)
+
+The official pylon ROS driver for [Basler](http://www.baslerweb.com/) GigE Vision and USB3 Vision cameras.
 
 **Please Note:**
 This project is offered with no technical support by Basler AG.
@@ -12,6 +21,7 @@ This driver was improved by [drag and bot GmbH](https://www.dragandbot.com) from
 
 - **pylon_camera**: the driver itself
 - **camera_control_msgs**: message and service definitions for interacting with the camera driver
+- **dng_msgs**
 
 Please check the README file of each package for more details and help.
 
