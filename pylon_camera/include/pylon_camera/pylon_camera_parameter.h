@@ -324,6 +324,15 @@ public:
     */
 
     int grab_strategy_;
+
+    /**
+    * Camera trigger mode
+    * off = Free running capture
+    * on = Sortware trigger
+    */
+
+    int trigger_mode_;
+
     /**
     * camera white balance auto 
     */

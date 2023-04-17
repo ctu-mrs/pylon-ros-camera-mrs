@@ -1017,6 +1017,13 @@ protected:
      * 2 = GrabStrategy_LatestImages
      */
     int grab_strategy ;
+    
+    /**
+     * Camera trigger mode
+     * off = Free running capture
+     * on = Software trigger
+     */
+    int trigger_mode ;
 
     /**
      * True if the extended binary exposure search is running.

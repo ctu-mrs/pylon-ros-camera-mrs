@@ -363,6 +363,7 @@ bool PylonCameraImpl<CameraTraitT>::startGrabbing(const PylonCameraParameter& pa
             if (error) return false;
         }
         grab_strategy = parameters.grab_strategy_;
+        trigger_mode = parameters.trigger_mode_;
         //cam_->StartGrabbing();
         grabbingStarting();
         user_output_selector_enums_ = detectAndCountNumUserOutputs();
@@ -2872,6 +2873,12 @@ std::string PylonCameraImpl<CameraTraitT>::grabbingStarting() const
 {
     try
     {
+        if(trigger_mode == false) {
+            cam_->TriggerMode.SetValue(TriggerModeEnums::TriggerMode_Off);
+        } else {
+            cam_->TriggerMode.SetValue(TriggerModeEnums::TriggerMode_On);
+        }
+
         if(grab_strategy == 0) {
            cam_->StartGrabbing(Pylon::EGrabStrategy::GrabStrategy_OneByOne); 
         } else if (grab_strategy == 1) {
@@ -2881,6 +2888,7 @@ std::string PylonCameraImpl<CameraTraitT>::grabbingStarting() const
         } else {
             cam_->StartGrabbing(Pylon::EGrabStrategy::GrabStrategy_OneByOne); 
         }
+
 
         return "done";
 
