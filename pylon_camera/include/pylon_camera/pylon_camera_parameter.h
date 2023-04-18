@@ -262,9 +262,10 @@ public:
     bool enable_status_publisher_;
 
     /**
-     * a flag used to enable/disable the current camera publisher.
+     * a flag used to enable/disable the current camera grabber.
+     * WARNING: under current implementation this can seriously degrade the maximum framerate
      */
-    bool enable_current_params_publisher_;
+    bool enable_superslow_current_params_grabber_;
 
     /**
      * The startup user set.

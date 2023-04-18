@@ -624,6 +624,7 @@ void PylonCameraNode::spin()
             img_rect_pub_->publish(cv_bridge_img_rect_->toImageMsg());
         }
     }
+
     // Check if the image encoding changed , then save the new image encoding and restart the image grabbing to fix the ros sensor message type issue.
     if (pylon_camera_parameter_set_.imageEncoding() != pylon_camera_->currentROSEncoding()) 
       {
@@ -635,7 +636,7 @@ void PylonCameraNode::spin()
     { 
       componentStatusPublisher.publish(cm_status);
     } 
-    if (pylon_camera_parameter_set_.enable_current_params_publisher_)
+    if (pylon_camera_parameter_set_.enable_superslow_current_params_grabber_)
     { 
       currentParamPub();
     } 
@@ -644,6 +645,7 @@ void PylonCameraNode::spin()
 bool PylonCameraNode::grabImage()
 {
     boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_); 
+
     if ( !pylon_camera_->grab(img_raw_msg_.data) )
     {
         /* ROS_ERROR("[%s]: Could not grab image. Shutting down to respawn.", ros::this_node::getName().c_str()); */
@@ -665,6 +667,8 @@ bool PylonCameraNode::grabImage()
         initCamera(spin_while_initializing_);
         return false;
     }
+
+
     img_raw_msg_.header.stamp = ros::Time::now(); 
     return true;
 }
@@ -3292,7 +3296,7 @@ bool PylonCameraNode::getChunkCounterValueCallback(camera_control_msgs::GetInteg
 
 void PylonCameraNode::currentParamPub()
 {
-  boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
+
   if ( !pylon_camera_->isReady() )
     {
       ROS_WARN("Error in currentParamPub(): pylon_camera_ is not ready!");
@@ -3303,6 +3307,7 @@ void PylonCameraNode::currentParamPub()
   {
     try
     {
+  boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
       params.black_level = pylon_camera_->getBlackLevel();
       params.reverse_x =  pylon_camera_->getReverseXY(true);
       params.reverse_y =  pylon_camera_->getReverseXY(false);

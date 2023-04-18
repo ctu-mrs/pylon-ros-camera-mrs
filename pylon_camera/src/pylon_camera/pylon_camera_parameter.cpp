@@ -60,7 +60,7 @@ PylonCameraParameter::PylonCameraParameter() :
         auto_exp_upper_lim_(0.0),
         mtu_size_(3000),
         enable_status_publisher_(false),
-        enable_current_params_publisher_(false),
+        enable_superslow_current_params_grabber_(false),
         startup_user_set_(""),
         inter_pkg_delay_(1000),
         shutter_mode_(SM_DEFAULT),
@@ -234,9 +234,11 @@ void PylonCameraParameter::readFromRosParameterServer(const ros::NodeHandle& nh)
         nh.getParam("enable_status_publisher", enable_status_publisher_);
     }
 
-    if ( nh.hasParam("enable_current_params_publisher") )
+    if ( nh.hasParam("enable_superslow_current_params_grabber") )
     {
-        nh.getParam("enable_current_params_publisher", enable_current_params_publisher_);
+        nh.getParam("enable_superslow_current_params_grabber", enable_superslow_current_params_grabber_);
+        if (enable_superslow_current_params_grabber_)
+          ROS_WARN("[%s]: Enabling the parameter grabber under current implementation seriously degrades the maximum framerate.", ros::this_node::getName().c_str());
     }
 
     if ( nh.hasParam("gige/inter_pkg_delay") )
