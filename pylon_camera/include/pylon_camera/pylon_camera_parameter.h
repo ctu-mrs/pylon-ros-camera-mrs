@@ -328,11 +328,25 @@ public:
 
     /**
     * Camera trigger mode
-    * off = Free running capture
-    * on = Sortware trigger
+    * False = Free running capture
+    * True = Sortware trigger
     */
 
-    int trigger_mode_;
+    bool trigger_mode_;
+
+    /**
+    * Device throughput limit
+    * False = Disabled
+    * True = Enabled
+    */
+    bool device_throughput_limiter_;
+
+    /**
+    * Framerate limiting based on reported maximum possbile framerate (it lies)
+    * False = Disabled
+    * True = Enabled
+    */
+    bool frame_rate_limiting_enabled_;
 
     /**
     * camera white balance auto 

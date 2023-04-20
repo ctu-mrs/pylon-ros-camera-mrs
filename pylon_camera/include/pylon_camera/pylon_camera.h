@@ -1023,7 +1023,14 @@ protected:
      * off = Free running capture
      * on = Software trigger
      */
-    int trigger_mode ;
+    bool trigger_mode ;
+
+    /**
+    * Device throughput limit
+    * False = Disabled
+    * True = Enabled
+    */
+    bool device_throughput_limiter;
 
     /**
      * True if the extended binary exposure search is running.

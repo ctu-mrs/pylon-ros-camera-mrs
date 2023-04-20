@@ -285,6 +285,18 @@ bool PylonCameraNode::initAndRegister()
         return false;
     }
 
+    pylon_camera_->setTriggerMode(pylon_camera_parameter_set_.trigger_mode_) ;
+      
+      
+    if ( !pylon_camera_->setGrabbingStrategy(pylon_camera_parameter_set_.grab_strategy_) )
+    {
+        cm_status.status_id = dnb_msgs::ComponentStatus::ERROR;
+        ROS_ERROR("Error while trying to set the grabbing strategy!");
+        return false;
+    }
+    pylon_camera_->setDeviceLinkThroughputLimitMode(pylon_camera_parameter_set_.device_throughput_limiter_);
+
+
     if ( !pylon_camera_->openCamera() )
     {
         ROS_ERROR("Error while trying to open the desired camera!");
@@ -482,6 +494,7 @@ bool PylonCameraNode::startGrabbing()
             << "shutter mode = "
             << pylon_camera_parameter_set_.shutterModeString());
     // Framerate Settings
+    if ( pylon_camera_parameter_set_.frame_rate_limiting_enabled_)
     if ( pylon_camera_->maxPossibleFramerate() < pylon_camera_parameter_set_.frameRate() )
     {   
         ROS_INFO("Desired framerate %.2f is higher than max possible. Will limit framerate to: %.2f Hz",
