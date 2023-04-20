@@ -81,7 +81,7 @@ PylonCameraParameter::PylonCameraParameter() :
         camera_info_url_(""),
         image_encoding_(""),
         device_throughput_limiter_(false),
-        frame_rate_limiting_enabled_(false)
+        frame_rate_limiting_enabled_(true)
 {}
 
 PylonCameraParameter::~PylonCameraParameter()

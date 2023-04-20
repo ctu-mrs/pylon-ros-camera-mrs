@@ -285,16 +285,6 @@ bool PylonCameraNode::initAndRegister()
         return false;
     }
 
-    pylon_camera_->setTriggerMode(pylon_camera_parameter_set_.trigger_mode_) ;
-      
-      
-    if ( !pylon_camera_->setGrabbingStrategy(pylon_camera_parameter_set_.grab_strategy_) )
-    {
-        cm_status.status_id = dnb_msgs::ComponentStatus::ERROR;
-        ROS_ERROR("Error while trying to set the grabbing strategy!");
-        return false;
-    }
-    pylon_camera_->setDeviceLinkThroughputLimitMode(pylon_camera_parameter_set_.device_throughput_limiter_);
 
 
     if ( !pylon_camera_->openCamera() )
@@ -308,6 +298,17 @@ bool PylonCameraNode::initAndRegister()
         }
         return false;
     }
+
+    pylon_camera_->setTriggerMode(pylon_camera_parameter_set_.trigger_mode_) ;
+      
+      
+    if ( !pylon_camera_->setGrabbingStrategy(pylon_camera_parameter_set_.grab_strategy_) )
+    {
+        cm_status.status_id = dnb_msgs::ComponentStatus::ERROR;
+        ROS_ERROR("Error while trying to set the grabbing strategy!");
+        return false;
+    }
+    pylon_camera_->setDeviceLinkThroughputLimitMode(pylon_camera_parameter_set_.device_throughput_limiter_);
 
     if ( !pylon_camera_->applyCamSpecificStartupSettings(pylon_camera_parameter_set_) )
     {
