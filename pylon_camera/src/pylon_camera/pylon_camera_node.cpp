@@ -664,22 +664,24 @@ bool PylonCameraNode::grabImage()
     {
         /* ROS_ERROR("[%s]: Could not grab image. Shutting down to respawn.", ros::this_node::getName().c_str()); */
         /* ros::shutdown(); */
-        ROS_ERROR("[%s]: Could not grab image. Trying to reset.", ros::this_node::getName().c_str());
-        cm_status.status_id = dnb_msgs::ComponentStatus::ERROR;
-        cm_status.status_msg = "Could not grab image, trying to reset";
-        if (pylon_camera_parameter_set_.enable_status_publisher_)
-        {
-          componentStatusPublisher.publish(cm_status);
-        }
-        pylon_camera_ = nullptr;
-        for ( ros::ServiceServer& user_output_srv : set_user_output_srvs_ )
-        {
-            user_output_srv.shutdown();
-        }
-        set_user_output_srvs_.clear();
-        ros::Duration(0.5).sleep();  // sleep for half a second
-        initCamera(spin_while_initializing_);
+        ROS_ERROR("[%s]: Could not grab image. Fucks will not be given.", ros::this_node::getName().c_str());
         return false;
+        /* ROS_ERROR("[%s]: Could not grab image. Trying to reset.", ros::this_node::getName().c_str()); */
+        /* cm_status.status_id = dnb_msgs::ComponentStatus::ERROR; */
+        /* cm_status.status_msg = "Could not grab image, trying to reset"; */
+        /* if (pylon_camera_parameter_set_.enable_status_publisher_) */
+        /* { */
+        /*   componentStatusPublisher.publish(cm_status); */
+        /* } */
+        /* pylon_camera_ = nullptr; */
+        /* for ( ros::ServiceServer& user_output_srv : set_user_output_srvs_ ) */
+        /* { */
+        /*     user_output_srv.shutdown(); */
+        /* } */
+        /* set_user_output_srvs_.clear(); */
+        /* ros::Duration(0.5).sleep();  // sleep for half a second */
+        /* initCamera(spin_while_initializing_); */
+        /* return false; */
     }
 
 
