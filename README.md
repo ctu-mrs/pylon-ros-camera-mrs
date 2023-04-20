@@ -107,6 +107,12 @@ In summary,
 | False - Free running capture | 1/2 - LatestImage(s) | Highest possible | No errors             | Latest frame                             |
 | True - Software trigger      | 0/1/2 - Any          | Lower Frame rate | No errors             | Need to process every frame sequentially |
 
+## Dropped frames on Pylon Viewer
+-------
+
+If you see that frames are being dropped on your pylon viewer and the same thing happens on the driver, please try another linux machine and it might not be an issue at all. The error message would be "Frame dropped due to insufficient bandwidth" or something similar. Lost 3 hours today trying to debug this and it worked immediately on another computer.
+
+-Parakh on 19th April 2023
 
 ## Available functionalities:
 
