@@ -327,14 +327,18 @@ void PylonCameraParameter::adaptDeviceUserId(const ros::NodeHandle& nh, const st
 
 void PylonCameraParameter::validateParameterSet(const ros::NodeHandle& nh)
 {
-    if ( !device_user_id_.empty() )
+    if ( !device_user_id_.empty() || !device_serial_number_.empty() )
     {
+      if (!device_user_id_.empty())
         ROS_INFO_STREAM("Trying to open the following camera: "
             << device_user_id_.c_str());
+      else
+        ROS_INFO_STREAM("Trying to open the following camera: "
+            << device_serial_number_.c_str());
     }
     else
     {
-        ROS_INFO_STREAM("No Device User ID set -> Will open the camera device "
+        ROS_INFO_STREAM("No Device User ID, nor Serial Number set -> Will open the camera device "
                 << "found first");
     }
 
