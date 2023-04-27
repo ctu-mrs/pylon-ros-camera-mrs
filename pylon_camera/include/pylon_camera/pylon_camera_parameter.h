@@ -77,6 +77,11 @@ public:
     void adaptDeviceUserId(const ros::NodeHandle& nh, const std::string& device_user_id);
 
     /**
+     * Getter for the device_serial_number_ set from ros-parameter server
+     */
+    const std::string& deviceSerialNumber() const;
+
+    /**
      * Getter for the string describing the shutter mode
      */
     std::string shutterModeString() const;
@@ -382,6 +387,12 @@ protected:
      * device list will be used
      */
     std::string device_user_id_;
+
+    /**
+     * The Serial Number of the camera. If empty, the first camera found in the
+     * device list will be used
+     */
+    std::string device_serial_number_;
 
     /**
      * The desired publisher frame rate if listening to the topics.

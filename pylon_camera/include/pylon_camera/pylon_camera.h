@@ -67,7 +67,15 @@ public:
      * first camera that could be found is returned.
      * @return new PylonCamera instance or NULL if the camera was not found.
      */
-    static std::unique_ptr<PylonCamera> create(const std::string& device_user_id);
+    static std::unique_ptr<PylonCamera> createFromUserID(const std::string& device_user_id);
+
+    /**
+     * Create a new PylonCamera instance based on the serial number of the camera.
+     * @param device_serial_number camera serial number. If the string is empty, the
+     * first camera that could be found is returned.
+     * @return new PylonCamera instance or NULL if the camera was not found.
+     */
+    static std::unique_ptr<PylonCamera> createFromSerial(const std::string& device_user_id);
 
     /**
      * Configures the camera according to the software trigger mode.
@@ -391,6 +399,12 @@ public:
      * @return the device_user_id
      */
     const std::string& deviceUserID() const;
+
+    /**
+     * Getter for the device serial number of the used camera
+     * @return the device_serial_number
+     */
+    const std::string& deviceSerialNumber() const;
 
     /**
      * Getter for the image height
@@ -977,6 +991,11 @@ protected:
      * The DeviceUserID of the found camera
      */
     std::string device_user_id_;
+    
+    /**
+     * The Serial Number of the found camera
+     */
+    std::string device_serial_number_;
 
     /**
      * Number of image rows.
