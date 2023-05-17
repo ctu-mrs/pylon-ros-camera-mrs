@@ -15,6 +15,8 @@
 
   <arg name="BASLER_ID" default="$(env BASLER_UV_LEFT)" />
 
+  <arg name="EXPOSE_US" default="10000" />
+
   <arg name="camera_name" default="basler_cam" />
 
   <arg name="camera_config_file" default="$(find uvdar_core)/config/camera_config/basler_grayscale.yaml" />
@@ -101,7 +103,7 @@
         <param name="startup_user_set" value="$(arg startup_user_set)"/>
         <param name="enable_status_publisher" value="$(arg enable_status_publisher)"/>
         <param name="enable_current_params_publisher" value="false"/>
-        <param name="exposure" type="double" value="10000"/>
+        <param name="exposure" type="double" value="$(arg EXPOSE_US)"/>
       </node>
   </group>
 
