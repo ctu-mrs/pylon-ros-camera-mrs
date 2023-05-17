@@ -1,6 +1,5 @@
 <launch>
   <arg name="uav_name" default="$(env UAV_NAME)"/>
-  <arg name="mrs_id" default="$(env MRS_ID)"/>
 
   <arg name="standalone" default="false"/>
 
