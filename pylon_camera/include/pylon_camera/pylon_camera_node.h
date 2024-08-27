@@ -1143,6 +1143,22 @@ protected:
      */
     bool getChunkCounterValueCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
 
+     /**
+     * Method to set the overlap mode   
+     * @param value : false = off, true = on
+     * @return error message if an error occurred or done message otherwise.
+     */
+    std::string setOverlapMode(const bool& value);
+
+    /**
+     * Service callback for setting the overlap mode
+     * @param req request
+     * @param res response
+     * @return true on success
+     */
+    bool setOverlapModeCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
+
+
 		// set differently for node and nodelet (nodelet shouldn't spin)
 		bool spin_while_initializing_;
 
@@ -1218,6 +1234,7 @@ protected:
     ros::ServiceServer get_chunk_line_status_all_srv;
     ros::ServiceServer get_chunk_frame_counter_srv;
     ros::ServiceServer get_chunk_counter_value_srv;
+    ros::ServiceServer set_overlap_mode_srv_;
 
     std::vector<ros::ServiceServer> set_user_output_srvs_;
 

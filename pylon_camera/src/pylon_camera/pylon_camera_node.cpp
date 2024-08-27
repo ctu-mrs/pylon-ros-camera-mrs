@@ -128,6 +128,7 @@ bool PylonCameraNode::initClass(const ros::NodeHandle& nh, const bool spin_while
     get_chunk_line_status_all_srv = nh_.advertiseService("get_chunk_line_status_all", &PylonCameraNode::getChunkLineStatusAllCallback, this);
     get_chunk_frame_counter_srv = nh_.advertiseService("get_chunk_frame_counter", &PylonCameraNode::getChunkFramecounterCallback, this);
     get_chunk_counter_value_srv = nh_.advertiseService("get_chunk_counter_value", &PylonCameraNode::getChunkCounterValueCallback, this);
+    set_overlap_mode_srv_ = nh_.advertiseService("set_overlap_mode", &PylonCameraNode::setOverlapModeCallback, this);
 
     /* set_user_output_srvs_(), */
     /* sampling_indices_(), */
@@ -306,7 +307,7 @@ bool PylonCameraNode::initAndRegister()
     }
 
     pylon_camera_->setTriggerMode(pylon_camera_parameter_set_.trigger_mode_) ;
-      
+    pylon_camera_->setOverlapMode(pylon_camera_parameter_set_.overlap_mode_) ;
       
     if ( !pylon_camera_->setGrabbingStrategy(pylon_camera_parameter_set_.grab_strategy_) )
     {
@@ -328,6 +329,7 @@ bool PylonCameraNode::initAndRegister()
         }
         return false;
     }
+    
 
     return true;
 }
@@ -3312,6 +3314,40 @@ bool PylonCameraNode::getChunkCounterValueCallback(camera_control_msgs::GetInteg
       res.value = value;
    }
     return true;
+}
+
+
+bool PylonCameraNode::setOverlapModeCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res)
+{
+    res.message = setOverlapMode(req.data);
+    if ((res.message.find("done") != std::string::npos) != 0)
+    {
+        res.success = true;
+    }
+    else 
+    {
+        res.success = false;
+        if (res.message == "Node is not writable.")
+        {
+          res.message = "Using this feature require stop image grabbing";
+        }
+        else if ((res.message.find("EnumEntry") != std::string::npos) != 0)
+        {
+          res.message = "The passed overlap mode number is not supported by the connected camera";
+        }
+    }
+    return true;
+}
+
+std::string PylonCameraNode::setOverlapMode(const bool& value)
+{   
+    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
+    if ( !pylon_camera_->isReady() )
+    {
+        ROS_WARN("Error in setOverlapMode(): pylon_camera_ is not ready!");
+        return "pylon camera is not ready!";
+    }
+    return pylon_camera_->setOverlapMode(value) ;
 }
 
 void PylonCameraNode::currentParamPub()

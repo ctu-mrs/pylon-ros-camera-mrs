@@ -69,6 +69,7 @@ PylonCameraParameter::PylonCameraParameter() :
         trigger_timeout_(5000),
 	      grab_strategy_(0),
 	      trigger_mode_(false),
+	      overlap_mode_(false),
         white_balance_auto_(0),
         white_balance_auto_given_(false),
         white_balance_ratio_red_(1.0),
@@ -308,6 +309,10 @@ void PylonCameraParameter::readFromRosParameterServer(const ros::NodeHandle& nh)
     if ( nh.hasParam("trigger_mode") )
     {
         nh.getParam("trigger_mode", trigger_mode_);
+    }
+    if ( nh.hasParam("overlap_mode") )
+    {
+        nh.getParam("overlap_mode", overlap_mode_);
     }
 
     nh.param<bool>("auto_flash", auto_flash_, false);

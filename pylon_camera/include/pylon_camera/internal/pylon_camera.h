@@ -303,6 +303,10 @@ public:
 
     virtual int getChunkCounterValue();
 
+    virtual std::string setOverlapMode(const bool& value);
+
+    virtual int getOverlapMode();
+
 protected:
     typedef typename CameraTraitT::CBaslerInstantCameraT CBaslerInstantCameraT;
     typedef typename CameraTraitT::ExposureAutoEnums ExposureAutoEnums;
@@ -332,6 +336,7 @@ protected:
     typedef typename CameraTraitT::UserSetDefaultSelectorEnums UserSetDefaultSelectorEnums;
     typedef typename CameraTraitT::LineFormatEnums LineFormatEnums;
     typedef typename CameraTraitT::BalanceRatioSelectorEnums BalanceRatioSelectorEnums;
+    typedef typename CameraTraitT::OverlapModeEnums OverlapModeEnums;
 
 
 

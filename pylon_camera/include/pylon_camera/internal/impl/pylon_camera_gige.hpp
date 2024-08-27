@@ -77,6 +77,7 @@ struct GigECameraTrait
     typedef Basler_UniversalCameraParams::LineFormatEnums LineFormatEnums;
     typedef Basler_UniversalCameraParams::GammaSelectorEnums GammaSelectorEnums;
     typedef Basler_UniversalCameraParams::BalanceRatioSelectorEnums BalanceRatioSelectorEnums;
+    typedef Basler_UniversalCameraParams::OverlapModeEnums OverlapModeEnums;
 
 
     static inline AutoTargetBrightnessValueType convertBrightness(const int& value)
@@ -1532,6 +1533,19 @@ std::string PylonGigECamera::setWhiteBalance(const double& redValue, const doubl
         ROS_ERROR_STREAM("An exception while setting the white balance occurred:" << e.GetDescription());
         return e.GetDescription();
     }
+}
+
+
+template <>
+std::string PylonGigECamera::setOverlapMode([[maybe_unused]] const bool& value)
+{
+    return "Trying to change the overlap mode. The connected Camera not supporting this feature";
+}
+
+template <>
+int PylonGigECamera::getOverlapMode()
+{
+    return -1; // Not available
 }
 
 }  // namespace pylon_camera

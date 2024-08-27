@@ -3571,6 +3571,67 @@ int PylonCameraImpl<CameraTraitT>::getChunkCounterValue() {
     }
 }
 
+template <typename CameraTraitT> 
+std::string PylonCameraImpl<CameraTraitT>::setOverlapMode(const bool& value)
+{
+    try
+    {   if ( GenApi::IsAvailable(cam_->OverlapMode) )
+        {
+            if (value)
+            {
+                cam_->OverlapMode.SetValue(OverlapModeEnums::OverlapMode_On);
+            }
+            else
+            {
+                cam_->OverlapMode.SetValue(OverlapModeEnums::OverlapMode_Off);
+            }
+        }
+        else 
+        {
+            ROS_ERROR_STREAM("Error while trying to change the overlap mode. The connected Camera not supporting this feature");
+            return "The connected Camera not supporting this feature";
+        }
+
+    }
+    catch ( const GenICam::GenericException &e )
+    {
+        ROS_ERROR_STREAM("An exception while setting the overlap mode occurred:" << e.GetDescription());
+        return e.GetDescription();
+    }
+    return "done";
+}
+
+template <typename CameraTraitT> 
+int PylonCameraImpl<CameraTraitT>::getOverlapMode()
+{
+    try
+    {   if ( GenApi::IsAvailable(cam_->OverlapMode) )
+        {
+            if (cam_->OverlapMode.GetValue() == OverlapModeEnums::OverlapMode_On)
+            {
+                return 1; // On
+            }
+            else if (cam_->OverlapMode.GetValue() == OverlapModeEnums::OverlapMode_Off)
+            {
+               return 0; // Off
+            }
+            else 
+            {
+               return -3; // Off 
+            }
+        }
+        else 
+        {
+            return -1; // Not available
+        }
+
+    }
+    catch ( const GenICam::GenericException &e )
+    {
+        return -2; // error
+    }
+
+}
 
 }  // namespace pylon_camera
 

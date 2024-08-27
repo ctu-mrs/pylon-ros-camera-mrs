@@ -340,6 +340,14 @@ public:
     bool trigger_mode_;
 
     /**
+    * Camera overlap mode
+    * False = Exposure starts after image readout
+    * True = Exposure starts during image readout
+    */
+
+    bool overlap_mode_;
+
+    /**
     * Device throughput limit
     * False = Disabled
     * True = Enabled

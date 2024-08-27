@@ -965,6 +965,18 @@ public:
     */
     virtual int getChunkCounterValue() = 0;
 
+    /**
+     * set the overlap mode   
+     * @param value : false = off, true = on
+     * @return error message if an error occurred or done message otherwise.
+     */
+    virtual std::string setOverlapMode(const bool& value) = 0;
+
+    /**
+     * get current overlap mode   
+     * @return true when on, otherwise false
+     */
+    virtual int getOverlapMode() = 0;
 
 
     virtual ~PylonCamera();

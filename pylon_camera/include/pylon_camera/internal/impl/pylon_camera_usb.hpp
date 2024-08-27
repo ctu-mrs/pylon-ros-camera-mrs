@@ -72,12 +72,18 @@ struct USBCameraTrait
     typedef Basler_UniversalCameraParams::UserSetDefaultEnums UserSetDefaultSelectorEnums;
     typedef Basler_UniversalCameraParams::LineFormatEnums LineFormatEnums;
     typedef Basler_UniversalCameraParams::BalanceRatioSelectorEnums BalanceRatioSelectorEnums;
+    typedef Basler_UniversalCameraParams::OverlapModeEnums OverlapModeEnums;
 
 
     static inline AutoTargetBrightnessValueType convertBrightness(const int& value)
     {
         return value / 255.0;
     }
+
+
+    std::string setOverlapMode(const bool& value);
+
+    int getOverlapMode();
 };
 
 typedef PylonCameraImpl<USBCameraTrait> PylonUSBCamera;
