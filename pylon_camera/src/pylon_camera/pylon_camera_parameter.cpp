@@ -84,7 +84,13 @@ PylonCameraParameter::PylonCameraParameter() :
         camera_info_url_(""),
         image_encoding_(""),
         device_throughput_limiter_(false),
-        frame_rate_limiting_enabled_(true)
+        frame_rate_limiting_enabled_(true),
+        reverse_x_(false),
+        reverse_y_(false),
+        roi_x_(0),
+        roi_y_(0),
+        roi_w_(0),
+        roi_h_(0)
 {}
 
 PylonCameraParameter::~PylonCameraParameter()
@@ -315,6 +321,30 @@ void PylonCameraParameter::readFromRosParameterServer(const ros::NodeHandle& nh)
     {
         nh.getParam("overlap_mode", overlap_mode_);
         overlap_mode_given_ = true;
+    }
+    if ( nh.hasParam("reverse_x") )
+    {
+        nh.getParam("reverse_x", reverse_x_);
+    }
+    if ( nh.hasParam("reverse_y") )
+    {
+        nh.getParam("reverse_y", reverse_y_);
+    }
+    if ( nh.hasParam("roi_x") )
+    {
+        nh.getParam("roi_x", roi_x_);
+    }
+    if ( nh.hasParam("roi_y") )
+    {
+        nh.getParam("roi_y", roi_y_);
+    }
+    if ( nh.hasParam("roi_w") )
+    {
+        nh.getParam("roi_w", roi_w_);
+    }
+    if ( nh.hasParam("roi_h") )
+    {
+        nh.getParam("roi_h", roi_h_);
     }
 
     nh.param<bool>("auto_flash", auto_flash_, false);

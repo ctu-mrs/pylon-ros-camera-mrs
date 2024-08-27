@@ -328,7 +328,7 @@ bool PylonCameraNode::initAndRegister()
         }
         return false;
     }
-    
+
 
     return true;
 }
@@ -493,6 +493,21 @@ bool PylonCameraNode::startGrabbing()
     }
     if (pylon_camera_parameter_set_.overlap_mode_given_) {
         pylon_camera_->setOverlapMode(pylon_camera_parameter_set_.overlap_mode_);
+    }
+    
+    pylon_camera_->reverseXY(pylon_camera_parameter_set_.reverse_x_, true);
+    pylon_camera_->reverseXY(pylon_camera_parameter_set_.reverse_y_, false);
+
+    if (pylon_camera_parameter_set_.roi_w_ && pylon_camera_parameter_set_.roi_h_) {
+        sensor_msgs::RegionOfInterest* target_roi = new sensor_msgs::RegionOfInterest();
+        sensor_msgs::RegionOfInterest* reached_roi = new sensor_msgs::RegionOfInterest();
+        target_roi->x_offset = pylon_camera_parameter_set_.roi_x_;
+        target_roi->y_offset = pylon_camera_parameter_set_.roi_y_;
+        target_roi->width = pylon_camera_parameter_set_.roi_w_;
+        target_roi->height = pylon_camera_parameter_set_.roi_h_;
+        target_roi->do_rectify = false;
+
+        pylon_camera_->setROI(*target_roi, *reached_roi);
     }
 
     ROS_INFO_STREAM("Startup settings: "

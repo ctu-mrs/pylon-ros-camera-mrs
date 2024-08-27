@@ -376,6 +376,19 @@ public:
     float white_balance_ratio_blue_;
     bool white_balance_ratio_given_;
 
+    /**
+     * camera image reverse params
+    */
+    bool reverse_x_;
+    bool reverse_y_;
+
+    /**
+        * camera roi params
+    */
+    int roi_x_;
+    int roi_y_;
+    int roi_w_;
+    int roi_h_;
 
 protected:
     /**
