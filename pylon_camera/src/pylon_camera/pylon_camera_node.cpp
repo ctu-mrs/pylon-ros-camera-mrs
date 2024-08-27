@@ -306,8 +306,7 @@ bool PylonCameraNode::initAndRegister()
         return false;
     }
 
-    pylon_camera_->setTriggerMode(pylon_camera_parameter_set_.trigger_mode_) ;
-    pylon_camera_->setOverlapMode(pylon_camera_parameter_set_.overlap_mode_) ;
+    pylon_camera_->setTriggerMode(pylon_camera_parameter_set_.trigger_mode_);
       
     if ( !pylon_camera_->setGrabbingStrategy(pylon_camera_parameter_set_.grab_strategy_) )
     {
@@ -491,6 +490,9 @@ bool PylonCameraNode::startGrabbing()
         { 
             pylon_camera_->disableAllRunningAutoBrightessFunctions();
         }
+    }
+    if (pylon_camera_parameter_set_.overlap_mode_given_) {
+        pylon_camera_->setOverlapMode(pylon_camera_parameter_set_.overlap_mode_);
     }
 
     ROS_INFO_STREAM("Startup settings: "

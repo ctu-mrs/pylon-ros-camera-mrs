@@ -346,6 +346,7 @@ public:
     */
 
     bool overlap_mode_;
+    bool overlap_mode_given_;
 
     /**
     * Device throughput limit
