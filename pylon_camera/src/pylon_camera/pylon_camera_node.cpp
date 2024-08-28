@@ -314,7 +314,6 @@ bool PylonCameraNode::initAndRegister()
         ROS_ERROR("Error while trying to set the grabbing strategy!");
         return false;
     }
-    pylon_camera_->setDeviceLinkThroughputLimitMode(pylon_camera_parameter_set_.device_throughput_limiter_);
 
     if ( !pylon_camera_->applyCamSpecificStartupSettings(pylon_camera_parameter_set_) )
     {
@@ -494,6 +493,8 @@ bool PylonCameraNode::startGrabbing()
     if (pylon_camera_parameter_set_.overlap_mode_given_) {
         pylon_camera_->setOverlapMode(pylon_camera_parameter_set_.overlap_mode_);
     }
+
+    pylon_camera_->setDeviceLinkThroughputLimitMode(pylon_camera_parameter_set_.device_throughput_limiter_);
     
     pylon_camera_->reverseXY(pylon_camera_parameter_set_.reverse_x_, true);
     pylon_camera_->reverseXY(pylon_camera_parameter_set_.reverse_y_, false);

@@ -346,6 +346,11 @@ void PylonCameraParameter::readFromRosParameterServer(const ros::NodeHandle& nh)
     {
         nh.getParam("roi_h", roi_h_);
     }
+    if ( nh.hasParam("device_throughput_limiter") )
+    {
+        nh.getParam("device_throughput_limiter", device_throughput_limiter_);
+    }
+
 
     nh.param<bool>("auto_flash", auto_flash_, false);
     nh.param<bool>("auto_flash_line_2", auto_flash_line_2_, true);
