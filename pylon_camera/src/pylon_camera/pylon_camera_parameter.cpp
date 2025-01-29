@@ -96,6 +96,17 @@ PylonCameraParameter::PylonCameraParameter() :
 PylonCameraParameter::~PylonCameraParameter()
 {}
 
+template <typename T>
+void load_param_helper(ros::NodeHandle nh, const std::string& name, std::optional<T>& param)
+{
+  if (nh.hasParam(name))
+  {
+    T val;
+    nh.param<T>(name, val, {});
+    param = val;
+  }
+}
+
 void PylonCameraParameter::readFromRosParameterServer(const ros::NodeHandle& nh)
 {
     nh.param<std::string>("camera_frame", camera_frame_, "pylon_camera");
@@ -103,6 +114,21 @@ void PylonCameraParameter::readFromRosParameterServer(const ros::NodeHandle& nh)
     nh.param<std::string>("device_user_id", device_user_id_, "");
 
     nh.param<std::string>("device_serial_number", device_serial_number_, "");
+
+    load_param_helper(nh, "trigger/selector", trigger_selector_);
+    load_param_helper(nh, "trigger/source", trigger_source_);
+    load_param_helper(nh, "trigger/activation", trigger_activation_);
+
+    load_param_helper(nh, "line/mode", line_mode_);
+    load_param_helper(nh, "line/source", line_source_);
+
+// Trigger Selector na Frame Start - v API: camera.TriggerSelector.SetValue(TriggerSelector_FrameStart);
+// Trigger Mode na On: camera.TriggerMode.SetValue(TriggerMode_On);
+// Trigger Source na Line 2: camera.TriggerSource.SetValue(TriggerSource_Line2);
+// Trigger Activation na Rising Edge: camera.TriggerActivation.SetValue(TriggerActivation_RisingEdge);
+// Pro Line 1: Line Mode na Output: camera.LineMode.SetValue(LineMode_Output)
+// Pro Line 1: Line Source na Exposure Active: camera.LineSource.SetValue(LineSource_ExposureActive);
+// Pro Line 2: Line Mode na Input: camera.LineMode.SetValue(LineMode_Input);
 
     if ( nh.hasParam("frame_rate") )
     {

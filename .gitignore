@@ -18,3 +18,9 @@ CATKIN_IGNORE
 *.idea
 *.pyc
 *.save
+
+# Vim swap files
+*.swp
+
+# The deb package
+*.deb

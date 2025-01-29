@@ -390,6 +390,21 @@ public:
     int roi_w_;
     int roi_h_;
 
+    std::optional<int> trigger_selector_;
+    std::optional<int> trigger_source_;
+    std::optional<int> trigger_activation_;
+
+    std::optional<int> line_mode_;
+    std::optional<int> line_source_;
+
+// Trigger Selector na Frame Start - v API: camera.TriggerSelector.SetValue(TriggerSelector_FrameStart);
+// Trigger Mode na On: camera.TriggerMode.SetValue(TriggerMode_On);
+// Trigger Source na Line 2: camera.TriggerSource.SetValue(TriggerSource_Line2);
+// Trigger Activation na Rising Edge: camera.TriggerActivation.SetValue(TriggerActivation_RisingEdge);
+// Pro Line 1: Line Mode na Output: camera.LineMode.SetValue(LineMode_Output)
+// Pro Line 1: Line Source na Exposure Active: camera.LineSource.SetValue(LineSource_ExposureActive);
+// Pro Line 2: Line Mode na Input: camera.LineMode.SetValue(LineMode_Input);
+
 protected:
     /**
      * Validates the parameter set found on the ros parameter server.
