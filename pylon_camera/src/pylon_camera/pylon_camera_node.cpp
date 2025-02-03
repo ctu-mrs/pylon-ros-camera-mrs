@@ -308,19 +308,6 @@ bool PylonCameraNode::initAndRegister()
 
     pylon_camera_->setTriggerMode(pylon_camera_parameter_set_.trigger_mode_);
 
-
-    if (pylon_camera_parameter_set_.trigger_selector_.has_value())
-      setTriggerSelector(pylon_camera_parameter_set_.trigger_selector_.value());
-    if (pylon_camera_parameter_set_.trigger_source_.has_value())
-      setTriggerSource(pylon_camera_parameter_set_.trigger_source_.value());
-    if (pylon_camera_parameter_set_.trigger_activation_.has_value())
-      setTriggerActivation(pylon_camera_parameter_set_.trigger_activation_.value());
-
-    if (pylon_camera_parameter_set_.line_mode_.has_value())
-      setLineMode(pylon_camera_parameter_set_.line_mode_.value());
-    if (pylon_camera_parameter_set_.line_source_.has_value())
-      setLineSource(pylon_camera_parameter_set_.line_source_.value());
-      
     if ( !pylon_camera_->setGrabbingStrategy(pylon_camera_parameter_set_.grab_strategy_) )
     {
         cm_status.status_id = dnb_msgs::ComponentStatus::ERROR;
@@ -524,6 +511,20 @@ bool PylonCameraNode::startGrabbing()
         pylon_camera_->setROI(*target_roi, *reached_roi);
     }
 
+    if (pylon_camera_parameter_set_.trigger_selector_.has_value())
+      setTriggerSelector(pylon_camera_parameter_set_.trigger_selector_.value());
+    if (pylon_camera_parameter_set_.trigger_source_.has_value())
+      setTriggerSource(pylon_camera_parameter_set_.trigger_source_.value());
+    if (pylon_camera_parameter_set_.trigger_activation_.has_value())
+      setTriggerActivation(pylon_camera_parameter_set_.trigger_activation_.value());
+
+    if (pylon_camera_parameter_set_.line_selector_.has_value())
+      setLineSelector(pylon_camera_parameter_set_.line_selector_.value());
+    if (pylon_camera_parameter_set_.line_mode_.has_value())
+      setLineMode(pylon_camera_parameter_set_.line_mode_.value());
+    if (pylon_camera_parameter_set_.line_source_.has_value())
+      setLineSource(pylon_camera_parameter_set_.line_source_.value());
+      
     ROS_INFO_STREAM("Startup settings: "
             << "encoding = '" << pylon_camera_->currentROSEncoding() << "', "
             << "binning = [" << pylon_camera_->currentBinningX() << ", "

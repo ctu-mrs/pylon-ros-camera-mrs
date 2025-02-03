@@ -71,26 +71,26 @@ PylonCameraParameter::PylonCameraParameter() :
 	      trigger_mode_(false),
 	      overlap_mode_(false),
 	      overlap_mode_given_(false),
+        device_throughput_limiter_(false),
+        frame_rate_limiting_enabled_(true),
         white_balance_auto_(0),
         white_balance_auto_given_(false),
         white_balance_ratio_red_(1.0),
         white_balance_ratio_green_(1.0),
         white_balance_ratio_blue_(1.0),
         white_balance_ratio_given_(false),
-        camera_frame_("pylon_camera"),
-        device_user_id_(""),
-        device_serial_number_(""),
-        frame_rate_(5.0),
-        camera_info_url_(""),
-        image_encoding_(""),
-        device_throughput_limiter_(false),
-        frame_rate_limiting_enabled_(true),
         reverse_x_(false),
         reverse_y_(false),
         roi_x_(0),
         roi_y_(0),
         roi_w_(0),
-        roi_h_(0)
+        roi_h_(0),
+        camera_frame_("pylon_camera"),
+        device_user_id_(""),
+        device_serial_number_(""),
+        frame_rate_(5.0),
+        camera_info_url_(""),
+        image_encoding_("")
 {}
 
 PylonCameraParameter::~PylonCameraParameter()
@@ -119,8 +119,9 @@ void PylonCameraParameter::readFromRosParameterServer(const ros::NodeHandle& nh)
     load_param_helper(nh, "trigger/source", trigger_source_);
     load_param_helper(nh, "trigger/activation", trigger_activation_);
 
-    load_param_helper(nh, "line/mode", line_mode_);
+    load_param_helper(nh, "line/selector", line_selector_);
     load_param_helper(nh, "line/source", line_source_);
+    load_param_helper(nh, "line/mode", line_mode_);
 
 // Trigger Selector na Frame Start - v API: camera.TriggerSelector.SetValue(TriggerSelector_FrameStart);
 // Trigger Mode na On: camera.TriggerMode.SetValue(TriggerMode_On);

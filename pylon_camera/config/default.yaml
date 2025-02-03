@@ -61,6 +61,42 @@ grab_strategy : 1
 #  Default value is "" (empty) means default_shutter_mode
 #shutter_mode: ""
 
+trigger:
+  # Valid values are:
+  # 0: FrameStart
+  # 1: FrameBurstStart
+  selector: 0
+  # Valid values are:
+  # 0: Software
+  # 1: Line1
+  # 2: Line2
+  # 3: Line3
+  # 4: Line4
+  source: 0
+  # Valid values are:
+  # 0: RisingEdge
+  # 1: FallingEdge
+  activation: 0
+
+line:
+  # Valid values are:
+  # 1: Line1
+  # 2: Line2
+  # 3: Line3
+  # 4: Line4
+  selector: 2
+  # Valid values are:
+  # 0: Input
+  # 1: Output
+  source: 1
+  # Valid values are:
+  # 0: ExposureActive
+  # 1: FrameTriggerWait
+  # 2: UserOutput1
+  # 3: Timer1Active
+  # 4: FlashWindow (only valid for shutter mode "Rolling")
+  mode: 0
+
 ##########################################################################
 ######################## Image Intensity Settings ########################
 ##########################################################################

@@ -1787,20 +1787,14 @@ std::string PylonCameraImpl<CameraTraitT>::setTriggerSelector(const int& mode)
     {
         if ( GenApi::IsAvailable(cam_->TriggerSelector) )
         {  
-            if (mode == 0)
-            {
-            cam_->TriggerSelector.SetValue(TriggerSelectorEnums::TriggerSelector_FrameStart);   
-            return "done";
-            }
-            else if (mode == 1)
-            {
-            cam_->TriggerSelector.SetValue(TriggerSelectorEnums::TriggerSelector_FrameBurstStart);   
-            return "done";
-            }
-            else
-            {
-                return "Error: unknown value";
-            }
+          switch (mode)
+          {
+            case 0: cam_->TriggerSelector.SetValue(TriggerSelectorEnums::TriggerSelector_FrameStart);
+                    return "done";
+            case 1: cam_->TriggerSelector.SetValue(TriggerSelectorEnums::TriggerSelector_FrameBurstStart);
+                    return "done";
+            default: return "Error: unknown value. Valid values are {0, 1}.";
+          }
         }
         else 
         {
@@ -1941,26 +1935,15 @@ std::string PylonCameraImpl<CameraTraitT>::setTriggerSource(const int& source)
     try
     {   if ( GenApi::IsAvailable(cam_->TriggerSource) )
         {
-            if (source == 0)
-            {
-                cam_->TriggerSource.SetValue(TriggerSourceEnums::TriggerSource_Software);
-            }
-            else if (source == 1)
-            {
-                cam_->TriggerSource.SetValue(TriggerSourceEnums::TriggerSource_Line1);
-            }
-            else if (source == 2)
-            {
-                cam_->TriggerSource.SetValue(TriggerSourceEnums::TriggerSource_Line3);
-            }
-            else if (source == 3)
-            {
-                cam_->TriggerSource.SetValue(TriggerSourceEnums::TriggerSource_Line4);
-            }
-            else 
-            {
-                return "Error: unknown value";
-            }
+          switch (source)
+          {
+            case 0: cam_->TriggerSource.SetValue(TriggerSourceEnums::TriggerSource_Software); break;
+            case 1: cam_->TriggerSource.SetValue(TriggerSourceEnums::TriggerSource_Line1); break;
+            case 2: cam_->TriggerSource.SetValue(TriggerSourceEnums::TriggerSource_Line2); break;
+            case 3: cam_->TriggerSource.SetValue(TriggerSourceEnums::TriggerSource_Line3); break;
+            case 4: cam_->TriggerSource.SetValue(TriggerSourceEnums::TriggerSource_Line4); break;
+            default: return "Error: unknown value. Valid values are {0, 1, 2, 3, 4}.";
+          }
         }
         else 
         {
@@ -1983,26 +1966,15 @@ int PylonCameraImpl<CameraTraitT>::getTriggerSource()
     try
     {   if ( GenApi::IsAvailable(cam_->TriggerSource) )
         {
-            if (cam_->TriggerSource.GetValue() == TriggerSourceEnums::TriggerSource_Software)
-            {
-                return 0; // Software
-            }
-            else if (cam_->TriggerSource.GetValue() == TriggerSourceEnums::TriggerSource_Line1)
-            {
-                return 1; // Line1
-            }
-            else if (cam_->TriggerSource.GetValue() == TriggerSourceEnums::TriggerSource_Line3)
-            {
-                return 2; // Line3
-            }
-            else if (cam_->TriggerSource.GetValue() == TriggerSourceEnums::TriggerSource_Line4)
-            {
-                return 3; // Line4
-            }
-            else 
-            {
-                return -3; // Unknown
-            }
+          switch (cam_->TriggerSource.GetValue() == TriggerSourceEnums::TriggerSource_Software)
+          {
+            case TriggerSourceEnums::TriggerSource_Software: return 0;
+            case TriggerSourceEnums::TriggerSource_Line1: return 1;
+            case TriggerSourceEnums::TriggerSource_Line2: return 2;
+            case TriggerSourceEnums::TriggerSource_Line3: return 3;
+            case TriggerSourceEnums::TriggerSource_Line4: return 4;
+            default: return -3; // unknown
+          }
         }
         else 
         {
@@ -2021,18 +1993,15 @@ std::string PylonCameraImpl<CameraTraitT>::setTriggerActivation(const int& value
     try
     {   if ( GenApi::IsAvailable(cam_->TriggerActivation) )
         {
-            if (value == 0)
-            {
-                cam_->TriggerActivation.SetValue(TriggerActivationEnums::TriggerActivation_RisingEdge);
-            }
-            else if (value == 1)
-            {
-                cam_->TriggerActivation.SetValue(TriggerActivationEnums::TriggerActivation_FallingEdge);
-            }
-            else 
-            {
-                return "Error: unknown value";
-            }
+          switch (value)
+          {
+            case 0: cam_->TriggerActivation.SetValue(TriggerActivationEnums::TriggerActivation_RisingEdge);
+                    break;
+            case 1: cam_->TriggerActivation.SetValue(TriggerActivationEnums::TriggerActivation_FallingEdge);
+                    break;
+            default:
+                return "Error: unknown value. Valud values are: {0, 1}.";
+          }
         }
         else 
         {
@@ -2054,18 +2023,12 @@ int PylonCameraImpl<CameraTraitT>::getTriggerActivation()
     try
     {   if ( GenApi::IsAvailable(cam_->TriggerActivation) )
         {
-            if (cam_->TriggerActivation.GetValue() == TriggerActivationEnums::TriggerActivation_RisingEdge)
-            {
-                return 0; // RisingEdge
-            }
-            else if (cam_->TriggerActivation.GetValue() == TriggerActivationEnums::TriggerActivation_FallingEdge)
-            {
-                return 1; // FallingEdge
-            }
-            else 
-            {
-                return -3; // Unknown
-            }
+          switch (cam_->TriggerActivation.GetValue())
+          {
+            case TriggerActivationEnums::TriggerActivation_RisingEdge: return 0;
+            case TriggerActivationEnums::TriggerActivation_FallingEdge: return 1;
+            default: return -3;
+          }
         }
         else 
         {
@@ -2127,26 +2090,14 @@ std::string PylonCameraImpl<CameraTraitT>::setLineSelector(const int& value)
     try
     {   if ( GenApi::IsAvailable(cam_->LineSelector) )
         {
-            if (value == 0)
-            {
-                cam_->LineSelector.SetValue(LineSelectorEnums::LineSelector_Line1);
-            }
-            else if (value == 1)
-            {
-                cam_->LineSelector.SetValue(LineSelectorEnums::LineSelector_Line2);
-            }
-            else if (value == 2)
-            {
-                cam_->LineSelector.SetValue(LineSelectorEnums::LineSelector_Line3);
-            }
-            else if (value == 3)
-            {
-                cam_->LineSelector.SetValue(LineSelectorEnums::LineSelector_Line4);
-            }
-            else 
-            {
-                return "Error: unknown value";
-            }
+          switch (value)
+          {
+            case 1: cam_->LineSelector.SetValue(LineSelectorEnums::LineSelector_Line1); break;
+            case 2: cam_->LineSelector.SetValue(LineSelectorEnums::LineSelector_Line2); break;
+            case 3: cam_->LineSelector.SetValue(LineSelectorEnums::LineSelector_Line3); break;
+            case 4: cam_->LineSelector.SetValue(LineSelectorEnums::LineSelector_Line4); break;
+            default: return "Error: unknown value. Valid values are: {1, 2, 3, 4}.";
+          }
         }
         else 
         {
@@ -2168,18 +2119,12 @@ std::string PylonCameraImpl<CameraTraitT>::setLineMode(const int& value)
     try
     {   if ( (cam_->LineFormat.GetValue() == LineFormatEnums::LineFormat_TTL) || (cam_->LineFormat.GetValue() == LineFormatEnums::LineFormat_LVTTL) )
         {
-            if (value == 0)
-            {
-                cam_->LineMode.SetValue(LineModeEnums::LineMode_Input);
-            }
-            else if (value == 1)
-            {
-                cam_->LineMode.SetValue(LineModeEnums::LineMode_Output);
-            }
-            else 
-            {
-                return "Error: unknown value";
-            }
+          switch (value)
+          {
+            case 0: cam_->LineMode.SetValue(LineModeEnums::LineMode_Input); break;
+            case 1: cam_->LineMode.SetValue(LineModeEnums::LineMode_Output); break;
+            default: return "Error: unknown value. Valid values are: {0, 1}.";
+          }
         }
         else 
         {
@@ -2202,43 +2147,28 @@ std::string PylonCameraImpl<CameraTraitT>::setLineSource(const int& value)
     {  
         if (cam_->LineMode.GetValue() == LineModeEnums::LineMode_Output )
         {
-            if (value == 0)
-            {   
-                cam_->LineSource.SetValue(LineSourceEnums::LineSource_ExposureActive);
-                return "done";
-            }
-            else if (value == 1)
-            {
-                cam_->LineSource.SetValue(LineSourceEnums::LineSource_FrameTriggerWait);
-                return "done"; 
-            }
-            else if (value == 2)
-            {
-                cam_->LineSource.SetValue(LineSourceEnums::LineSource_UserOutput1);
-                return "done"; 
-            }
-            else if (value == 3)
-            {
-                cam_->LineSource.SetValue(LineSourceEnums::LineSource_Timer1Active);
-                return "done"; 
-            }
-            else if (value == 4)
-            {
-                if (cam_->ShutterMode.GetValue() == ShutterModeEnums::ShutterMode_Rolling )
-                {
-                  cam_->LineSource.SetValue(LineSourceEnums::LineSource_FlashWindow);
+          switch (value)
+          {
+            case 0: cam_->LineSource.SetValue(LineSourceEnums::LineSource_ExposureActive);
+                    return "done";
+            case 1: cam_->LineSource.SetValue(LineSourceEnums::LineSource_FrameTriggerWait);
+                    return "done";
+            case 2: cam_->LineSource.SetValue(LineSourceEnums::LineSource_UserOutput1);
+                    return "done";
+            case 3: cam_->LineSource.SetValue(LineSourceEnums::LineSource_Timer1Active);
+                    return "done";
+            case 4:
+                  if (cam_->ShutterMode.GetValue() == ShutterModeEnums::ShutterMode_Rolling )
+                  {
+                    cam_->LineSource.SetValue(LineSourceEnums::LineSource_FlashWindow);
                     return "done";  
-                }
-                else 
-                {
-                    return "Error: the line source 'FlashWindow' supported by rolling shutter only";
-                }
-                 
-            }
-            else 
-            {
-                return "Error: unknown value";
-            }
+                  }
+                  else 
+                  {
+                      return "Error: the line source 'FlashWindow' supported by rolling shutter only";
+                  }
+            default: return "Error: unknown value. Valid values are: {0, 1, 2, 3, 4}.";
+          }
         }
         else 
         {

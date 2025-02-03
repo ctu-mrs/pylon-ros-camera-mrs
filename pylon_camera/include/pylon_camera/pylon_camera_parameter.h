@@ -394,8 +394,9 @@ public:
     std::optional<int> trigger_source_;
     std::optional<int> trigger_activation_;
 
-    std::optional<int> line_mode_;
+    std::optional<int> line_selector_;
     std::optional<int> line_source_;
+    std::optional<int> line_mode_;
 
 // Trigger Selector na Frame Start - v API: camera.TriggerSelector.SetValue(TriggerSelector_FrameStart);
 // Trigger Mode na On: camera.TriggerMode.SetValue(TriggerMode_On);
