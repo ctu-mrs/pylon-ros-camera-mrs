@@ -510,13 +510,12 @@ bool PylonCameraNode::startGrabbing()
     }
 
     // | --------------------- Trigger config --------------------- |
+    // trigger mode (on/off)
+    setTriggerMode(pylon_camera_parameter_set_.trigger_mode_);
+
     // trigger selector
     if (pylon_camera_parameter_set_.trigger_selector_.has_value())
       setTriggerSelector(pylon_camera_parameter_set_.trigger_selector_.value());
-
-    // trigger mode
-    if (pylon_camera_parameter_set_.trigger_mode_.has_value())
-      setTriggerMode(pylon_camera_parameter_set_.trigger_mode_.value());
 
     // trigger source
     if (pylon_camera_parameter_set_.trigger_source_.has_value())

@@ -128,9 +128,9 @@ void PylonCameraParameter::readFromRosParameterServer(const ros::NodeHandle& nh)
     }
 
     load_param_helper(nh, "trigger/selector", trigger_selector_);
-    load_param_helper(nh, "trigger/mode", trigger_mode_);
     load_param_helper(nh, "trigger/source", trigger_source_);
     load_param_helper(nh, "trigger/activation", trigger_activation_);
+    nh.param<bool>("trigger/mode", trigger_mode_, false);
     nh.param<int>("trigger/timeout", trigger_timeout_, 5000);
 
     if ( nh.hasParam("frame_rate") )

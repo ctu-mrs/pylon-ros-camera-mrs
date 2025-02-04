@@ -62,13 +62,13 @@ grab_strategy : 1
 
 trigger:
   # Valid values are:
+  # false: hardware trigger off
+  # true: hardware trigger on
+  mode: false
+  # Valid values are:
   # 0: FrameStart
   # 1: FrameBurstStart
   selector: 0
-  # Valid values are:
-  # false: off
-  # true: on
-  mode: false
   # Valid values are:
   # 0: Software
   # 1: Line1

@@ -378,9 +378,9 @@ public:
     int roi_h_;
 
     std::optional<int> trigger_selector_;
-    std::optional<bool> trigger_mode_;
     std::optional<int> trigger_source_;
     std::optional<int> trigger_activation_;
+    bool trigger_mode_;
     int trigger_timeout_;
 
     struct line_mode_t
