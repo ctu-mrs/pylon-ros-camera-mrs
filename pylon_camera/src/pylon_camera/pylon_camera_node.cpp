@@ -508,22 +508,37 @@ bool PylonCameraNode::startGrabbing()
 
         pylon_camera_->setROI(*target_roi, *reached_roi);
     }
-
+    
     // | --------------------- Trigger config --------------------- |
-    // trigger mode (on/off)
     setTriggerMode(pylon_camera_parameter_set_.trigger_mode_);
 
-    // trigger selector
-    if (pylon_camera_parameter_set_.trigger_selector_.has_value())
-      setTriggerSelector(pylon_camera_parameter_set_.trigger_selector_.value());
+    if (pylon_camera_parameter_set_.trigger_mode_) {
+        ROS_WARN_STREAM("Trigger mode is enabled.");
+        int trigger_mode = 0;
+        int trigger_source = 0;
+        int trigger_activation = 0;
+        
+        if (pylon_camera_parameter_set_.trigger_selector_.has_value()) 
+        {
+            trigger_mode = pylon_camera_parameter_set_.trigger_selector_.value();
+        }
 
-    // trigger source
-    if (pylon_camera_parameter_set_.trigger_source_.has_value())
-      setTriggerSource(pylon_camera_parameter_set_.trigger_source_.value());
+        if (pylon_camera_parameter_set_.trigger_source_.has_value())
+        {
+            trigger_source = pylon_camera_parameter_set_.trigger_source_.value(); 
+        }
 
-    // trigger activation
-    if (pylon_camera_parameter_set_.trigger_activation_.has_value())
-      setTriggerActivation(pylon_camera_parameter_set_.trigger_activation_.value());
+        if (pylon_camera_parameter_set_.trigger_activation_.has_value())
+        {
+            trigger_activation = pylon_camera_parameter_set_.trigger_activation_.value();
+        }
+
+        setTriggerSelector(trigger_mode);
+        setTriggerSource(trigger_source);
+        setTriggerActivation(trigger_activation);
+
+        ROS_WARN_STREAM("Trigger settings: mode=" << trigger_mode << ", source=" << trigger_source << ", activation=" << trigger_activation);
+    }
 
     // | ------------------- Line in/out config ------------------- |
     for (int it = 0; it < 4; it++)
@@ -534,8 +549,11 @@ bool PylonCameraNode::startGrabbing()
         setLineSelector(line.selector);
         setLineMode(line.mode);
         setLineSource(line.source);
+
+        ROS_WARN_STREAM("I/O Line " << line.selector << " settings: mode=" << (line.mode ? "output" : "input") << ", source=" << line.source);
       }
     }
+
       
     ROS_INFO_STREAM("Startup settings: "
             << "encoding = '" << pylon_camera_->currentROSEncoding() << "', "

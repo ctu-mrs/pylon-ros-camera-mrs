@@ -61,22 +61,22 @@ grab_strategy : 1
 #shutter_mode: ""
 
 trigger:
-  # Valid values are:
+  # Valid mode values are:
   # false: hardware trigger off
   # true: hardware trigger on
   mode: false
-  # Valid values are:
+  # Valid selector values are:
   # 0: FrameStart
   # 1: FrameBurstStart
   selector: 0
-  # Valid values are:
+  # Valid source values are:
   # 0: Software
   # 1: Line1
   # 2: Line2
   # 3: Line3
   # 4: Line4
   source: 0
-  # Valid values are:
+  # Valid activation values are:
   # 0: RisingEdge
   # 1: FallingEdge
   activation: 0
@@ -84,55 +84,55 @@ trigger:
 
 line1:
   # Valid values are:
-  # 0: Input
-  # 1: Output
-  source: 1
-  # Valid values are:
   # 0: ExposureActive
   # 1: FrameTriggerWait
   # 2: UserOutput1
   # 3: Timer1Active
   # 4: FlashWindow (only valid for shutter mode "Rolling")
+  source: 0
+  # Valid mode values are:
+  # 0: Input
+  # 1: Output
   mode: 0
 
 line2:
-  # Valid values are:
-  # 0: Input
-  # 1: Output
-  source: 1
-  # Valid values are:
+  # Valid source values are:
   # 0: ExposureActive
   # 1: FrameTriggerWait
   # 2: UserOutput1
   # 3: Timer1Active
   # 4: FlashWindow (only valid for shutter mode "Rolling")
-  mode: 1
+  source: 0
+  # Valid mode values are:
+  # 0: Input
+  # 1: Output
+  mode: 0
 
 line3:
-  # Valid values are:
-  # 0: Input
-  # 1: Output
-  source: 1
-  # Valid values are:
+  # Valid source values are:
   # 0: ExposureActive
   # 1: FrameTriggerWait
   # 2: UserOutput1
   # 3: Timer1Active
   # 4: FlashWindow (only valid for shutter mode "Rolling")
-  mode: 2
+  source: 0
+  # Valid mode values are:
+  # 0: Input
+  # 1: Output
+  mode: 0
 
 line4:
-  # Valid values are:
-  # 0: Input
-  # 1: Output
-  source: 1
-  # Valid values are:
+  # Valid source values are:
   # 0: ExposureActive
   # 1: FrameTriggerWait
   # 2: UserOutput1
   # 3: Timer1Active
   # 4: FlashWindow (only valid for shutter mode "Rolling")
-  mode: 3
+  source: 0
+  # Valid mode values are:
+  # 0: Input
+  # 1: Output
+  mode: 0
 
 ##########################################################################
 ######################## Image Intensity Settings ########################
