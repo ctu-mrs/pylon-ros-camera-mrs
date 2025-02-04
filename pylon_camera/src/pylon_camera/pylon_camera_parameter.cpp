@@ -66,9 +66,7 @@ PylonCameraParameter::PylonCameraParameter() :
         shutter_mode_(SM_DEFAULT),
         auto_flash_(false),
         grab_timeout_(500),
-        trigger_timeout_(5000),
 	      grab_strategy_(0),
-	      trigger_mode_(false),
 	      overlap_mode_(false),
 	      overlap_mode_given_(false),
         device_throughput_limiter_(false),
@@ -115,21 +113,25 @@ void PylonCameraParameter::readFromRosParameterServer(const ros::NodeHandle& nh)
 
     nh.param<std::string>("device_serial_number", device_serial_number_, "");
 
+    for (int it = 0; it < 4; it++)
+    {
+      const auto line_id = it+1;
+      const std::string line_name = "line" + std::to_string(line_id);
+      if (nh.hasParam(line_name))
+      {
+        line_mode_t line;
+        line.selector = line_id;
+        nh.param<int>(line_name + "/source", line.source, 0);
+        nh.param<int>(line_name + "/mode", line.mode, 0);
+        lines_[it] = line;
+      }
+    }
+
     load_param_helper(nh, "trigger/selector", trigger_selector_);
+    load_param_helper(nh, "trigger/mode", trigger_mode_);
     load_param_helper(nh, "trigger/source", trigger_source_);
     load_param_helper(nh, "trigger/activation", trigger_activation_);
-
-    load_param_helper(nh, "line/selector", line_selector_);
-    load_param_helper(nh, "line/source", line_source_);
-    load_param_helper(nh, "line/mode", line_mode_);
-
-// Trigger Selector na Frame Start - v API: camera.TriggerSelector.SetValue(TriggerSelector_FrameStart);
-// Trigger Mode na On: camera.TriggerMode.SetValue(TriggerMode_On);
-// Trigger Source na Line 2: camera.TriggerSource.SetValue(TriggerSource_Line2);
-// Trigger Activation na Rising Edge: camera.TriggerActivation.SetValue(TriggerActivation_RisingEdge);
-// Pro Line 1: Line Mode na Output: camera.LineMode.SetValue(LineMode_Output)
-// Pro Line 1: Line Source na Exposure Active: camera.LineSource.SetValue(LineSource_ExposureActive);
-// Pro Line 2: Line Mode na Input: camera.LineMode.SetValue(LineMode_Input);
+    nh.param<int>("trigger/timeout", trigger_timeout_, 5000);
 
     if ( nh.hasParam("frame_rate") )
     {
@@ -339,10 +341,6 @@ void PylonCameraParameter::readFromRosParameterServer(const ros::NodeHandle& nh)
     if ( nh.hasParam("grab_strategy") )
     {
         nh.getParam("grab_strategy", grab_strategy_);
-    }
-    if ( nh.hasParam("trigger_mode") )
-    {
-        nh.getParam("trigger_mode", trigger_mode_);
     }
     if ( nh.hasParam("overlap_mode") )
     {

@@ -318,11 +318,6 @@ public:
     int grab_timeout_;
 
     /**
-    * camera trigger timeout in ms
-    */
-    int trigger_timeout_;
-
-    /**
     * Camera grab strategy 
     * 0 = GrabStrategy_OneByOne
     * 1 = GrabStrategy_LatestImageOnly
@@ -330,14 +325,6 @@ public:
     */
 
     int grab_strategy_;
-
-    /**
-    * Camera trigger mode
-    * False = Free running capture
-    * True = Sortware trigger
-    */
-
-    bool trigger_mode_;
 
     /**
     * Camera overlap mode
@@ -391,20 +378,18 @@ public:
     int roi_h_;
 
     std::optional<int> trigger_selector_;
+    std::optional<bool> trigger_mode_;
     std::optional<int> trigger_source_;
     std::optional<int> trigger_activation_;
+    int trigger_timeout_;
 
-    std::optional<int> line_selector_;
-    std::optional<int> line_source_;
-    std::optional<int> line_mode_;
-
-// Trigger Selector na Frame Start - v API: camera.TriggerSelector.SetValue(TriggerSelector_FrameStart);
-// Trigger Mode na On: camera.TriggerMode.SetValue(TriggerMode_On);
-// Trigger Source na Line 2: camera.TriggerSource.SetValue(TriggerSource_Line2);
-// Trigger Activation na Rising Edge: camera.TriggerActivation.SetValue(TriggerActivation_RisingEdge);
-// Pro Line 1: Line Mode na Output: camera.LineMode.SetValue(LineMode_Output)
-// Pro Line 1: Line Source na Exposure Active: camera.LineSource.SetValue(LineSource_ExposureActive);
-// Pro Line 2: Line Mode na Input: camera.LineMode.SetValue(LineMode_Input);
+    struct line_mode_t
+    {
+      int selector;
+      int source;
+      int mode;
+    };
+    std::array<std::optional<line_mode_t>, 4> lines_;
 
 protected:
     /**

@@ -306,8 +306,6 @@ bool PylonCameraNode::initAndRegister()
         return false;
     }
 
-    pylon_camera_->setTriggerMode(pylon_camera_parameter_set_.trigger_mode_);
-
     if ( !pylon_camera_->setGrabbingStrategy(pylon_camera_parameter_set_.grab_strategy_) )
     {
         cm_status.status_id = dnb_msgs::ComponentStatus::ERROR;
@@ -511,19 +509,34 @@ bool PylonCameraNode::startGrabbing()
         pylon_camera_->setROI(*target_roi, *reached_roi);
     }
 
+    // | --------------------- Trigger config --------------------- |
+    // trigger selector
     if (pylon_camera_parameter_set_.trigger_selector_.has_value())
       setTriggerSelector(pylon_camera_parameter_set_.trigger_selector_.value());
+
+    // trigger mode
+    if (pylon_camera_parameter_set_.trigger_mode_.has_value())
+      setTriggerMode(pylon_camera_parameter_set_.trigger_mode_.value());
+
+    // trigger source
     if (pylon_camera_parameter_set_.trigger_source_.has_value())
       setTriggerSource(pylon_camera_parameter_set_.trigger_source_.value());
+
+    // trigger activation
     if (pylon_camera_parameter_set_.trigger_activation_.has_value())
       setTriggerActivation(pylon_camera_parameter_set_.trigger_activation_.value());
 
-    if (pylon_camera_parameter_set_.line_selector_.has_value())
-      setLineSelector(pylon_camera_parameter_set_.line_selector_.value());
-    if (pylon_camera_parameter_set_.line_mode_.has_value())
-      setLineMode(pylon_camera_parameter_set_.line_mode_.value());
-    if (pylon_camera_parameter_set_.line_source_.has_value())
-      setLineSource(pylon_camera_parameter_set_.line_source_.value());
+    // | ------------------- Line in/out config ------------------- |
+    for (int it = 0; it < 4; it++)
+    {
+      if (pylon_camera_parameter_set_.lines_[it].has_value())
+      {
+        const auto line = pylon_camera_parameter_set_.lines_[it].value();
+        setLineSelector(line.selector);
+        setLineMode(line.mode);
+        setLineSource(line.source);
+      }
+    }
       
     ROS_INFO_STREAM("Startup settings: "
             << "encoding = '" << pylon_camera_->currentROSEncoding() << "', "

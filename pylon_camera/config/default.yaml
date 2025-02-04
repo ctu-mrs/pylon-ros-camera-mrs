@@ -33,7 +33,6 @@ image_encoding: "mono8"
 #  Calling the GrabImages-Action can result in a higher framerate
 frame_rate: 60.0
 
-trigger_timeout: 5000  # in ms
 grab_timeout: 500  # in ms
 
 # Camera grab strategy 
@@ -67,6 +66,10 @@ trigger:
   # 1: FrameBurstStart
   selector: 0
   # Valid values are:
+  # false: off
+  # true: on
+  mode: false
+  # Valid values are:
   # 0: Software
   # 1: Line1
   # 2: Line2
@@ -77,14 +80,9 @@ trigger:
   # 0: RisingEdge
   # 1: FallingEdge
   activation: 0
+  timeout: 5000 # ms
 
-line:
-  # Valid values are:
-  # 1: Line1
-  # 2: Line2
-  # 3: Line3
-  # 4: Line4
-  selector: 2
+line1:
   # Valid values are:
   # 0: Input
   # 1: Output
@@ -96,6 +94,45 @@ line:
   # 3: Timer1Active
   # 4: FlashWindow (only valid for shutter mode "Rolling")
   mode: 0
+
+line2:
+  # Valid values are:
+  # 0: Input
+  # 1: Output
+  source: 1
+  # Valid values are:
+  # 0: ExposureActive
+  # 1: FrameTriggerWait
+  # 2: UserOutput1
+  # 3: Timer1Active
+  # 4: FlashWindow (only valid for shutter mode "Rolling")
+  mode: 1
+
+line3:
+  # Valid values are:
+  # 0: Input
+  # 1: Output
+  source: 1
+  # Valid values are:
+  # 0: ExposureActive
+  # 1: FrameTriggerWait
+  # 2: UserOutput1
+  # 3: Timer1Active
+  # 4: FlashWindow (only valid for shutter mode "Rolling")
+  mode: 2
+
+line4:
+  # Valid values are:
+  # 0: Input
+  # 1: Output
+  source: 1
+  # Valid values are:
+  # 0: ExposureActive
+  # 1: FrameTriggerWait
+  # 2: UserOutput1
+  # 3: Timer1Active
+  # 4: FlashWindow (only valid for shutter mode "Rolling")
+  mode: 3
 
 ##########################################################################
 ######################## Image Intensity Settings ########################
