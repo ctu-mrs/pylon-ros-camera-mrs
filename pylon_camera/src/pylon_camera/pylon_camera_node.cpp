@@ -513,14 +513,14 @@ bool PylonCameraNode::startGrabbing()
     setTriggerMode(pylon_camera_parameter_set_.trigger_mode_);
 
     if (pylon_camera_parameter_set_.trigger_mode_) {
-        ROS_WARN_STREAM("Trigger mode is enabled.");
-        int trigger_mode = 0;
+        ROS_WARN_STREAM("Trigger is enabled.");
+        int trigger_selector = 0;
         int trigger_source = 0;
         int trigger_activation = 0;
         
         if (pylon_camera_parameter_set_.trigger_selector_.has_value()) 
         {
-            trigger_mode = pylon_camera_parameter_set_.trigger_selector_.value();
+            trigger_selector = pylon_camera_parameter_set_.trigger_selector_.value();
         }
 
         if (pylon_camera_parameter_set_.trigger_source_.has_value())
@@ -533,11 +533,11 @@ bool PylonCameraNode::startGrabbing()
             trigger_activation = pylon_camera_parameter_set_.trigger_activation_.value();
         }
 
-        setTriggerSelector(trigger_mode);
+        setTriggerSelector(trigger_selector);
         setTriggerSource(trigger_source);
         setTriggerActivation(trigger_activation);
 
-        ROS_WARN_STREAM("Trigger settings: mode=" << trigger_mode << ", source=" << trigger_source << ", activation=" << trigger_activation);
+        ROS_WARN_STREAM("Trigger settings: selector=" << (trigger_selector == 0 ? "FrameStart" : "FrameBurstStart") << ", source=" << trigger_source << " (" << (trigger_source == 0 ? "software" : "line") << "), activation=" << (trigger_activation == 0 ? "rising edge" : "falling edge"));
     }
 
     // | ------------------- Line in/out config ------------------- |
@@ -550,7 +550,7 @@ bool PylonCameraNode::startGrabbing()
         setLineMode(line.mode);
         setLineSource(line.source);
 
-        ROS_WARN_STREAM("I/O Line " << line.selector << " settings: mode=" << (line.mode ? "output" : "input") << ", source=" << line.source);
+        ROS_WARN_STREAM("Dart I/O Line " << line.selector << ": mode=" << (line.mode ? "output" : "input") << ", source=" << (line.source == 0 ? "ExposureActive" : (line.source == 1 ? "FrameTriggerWait" : (line.source == 3 ? "UserOutput1" : (line.source == 4 ? "Timer1Active" : "FlashWindow")))));
       }
     }
 
