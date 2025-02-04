@@ -313,6 +313,7 @@ void PylonCameraParameter::readFromRosParameterServer(const ros::NodeHandle& nh)
     if ( nh.hasParam("grab_timeout") )
     {
         nh.getParam("grab_timeout", grab_timeout_);
+        if (grab_timeout_ == 0) grab_timeout_ = 0xffffffff;
     }
     if ( nh.hasParam("trigger_timeout") )
     {

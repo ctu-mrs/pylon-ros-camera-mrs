@@ -314,6 +314,7 @@ public:
     
     /**
     * camera grab timeout in ms
+    * set to 0xffffffff (or 0) for infinite timeout
     */
     int grab_timeout_;
 

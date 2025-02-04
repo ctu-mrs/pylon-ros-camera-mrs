@@ -2967,7 +2967,7 @@ bool PylonCameraNode::setGrabTimeoutCallback(camera_control_msgs::SetIntegerValu
 {
     grabbingStopping();
     try {
-      pylon_camera_parameter_set_.grab_timeout_ = req.value;
+      pylon_camera_parameter_set_.grab_timeout_ = req.value == 0 ? 0xffffffff : req.value;
       res.success = true;
     } catch (...){
       res.success = false;

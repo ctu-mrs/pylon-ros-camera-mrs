@@ -33,7 +33,7 @@ image_encoding: "mono8"
 #  Calling the GrabImages-Action can result in a higher framerate
 frame_rate: 60.0
 
-grab_timeout: 500  # in ms
+grab_timeout: 500  # in ms (0 for infinity)
 
 # Camera grab strategy 
 # 0 : GrabStrategy_OneByOne
