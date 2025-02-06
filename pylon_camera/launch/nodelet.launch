@@ -16,7 +16,7 @@
       <arg name="camera_name" default="basler" />
 
       <arg name="config_file" default="$(find pylon_camera)/config/uav.yaml" />
-      <arg name="camera_info_url" default="file://$(find mrs_uav_general)/config/camera_calibrations/basler/basler_default.yaml" />
+      <arg name="camera_info_url" default="" />
 
       <arg unless="$(arg debug)" name="launch_prefix" value="" />
       <arg     if="$(arg debug)" name="launch_prefix" value="debug_roslaunch" />
